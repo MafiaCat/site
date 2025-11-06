@@ -586,51 +586,20 @@
         }
 
         /* Couleurs d'accentuation par ère */
-        body.era-1 .era-section-display .era-name { color: #b8956a; }
-        body.era-2 .era-section-display .era-name { color: #7a9d6f; }
-        body.era-3 .era-section-display .era-name { color: #c4b5a0; }
-        body.era-4 .era-section-display .era-name { color: #a8a8a8; }
-        body.era-5 .era-section-display .era-name { color: #7a90b8; }
+        body.era-1 .era-section-title { color: #b8956a; }
+        body.era-2 .era-section-title { color: #7a9d6f; }
+        body.era-3 .era-section-title { color: #c4b5a0; }
+        body.era-4 .era-section-title { color: #a8a8a8; }
+        body.era-5 .era-section-title { color: #7a90b8; }
 
-        /* Affichage de l'ère et section - très visible */
-        .era-section-display {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            padding: 6px;
-            border-radius: 8px;
-            background: rgba(0,0,0,0.2);
-        }
-
-        .era-name {
+        /* Affichage de l'ère et section - format simplifié */
+        .era-section-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            transition: all 1.2s ease;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            filter: drop-shadow(0 0 6px currentColor);
-        }
-
-        .section-indicator {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.5);
-            font-weight: 400;
+            font-size: 1rem;
+            font-weight: 600;
             letter-spacing: 2px;
-            background: rgba(255,255,255,0.05);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        .section-name {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.8);
-            font-weight: 500;
-            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 1.2s ease;
         }
 
         /* Titre principal épuré */
@@ -667,12 +636,7 @@
 
         <!-- Stats Panel -->
         <div class="stats-panel mb-4">
-            <div class="grid grid-cols-4 gap-2 mb-3">
-                <div class="text-center col-span-2 era-section-display">
-                    <div class="era-name" id="currentEra">TRIBALE</div>
-                    <div class="section-indicator" id="sectionIndicator">1.1</div>
-                    <div class="section-name" id="currentSection">Le Monde</div>
-                </div>
+            <div class="grid grid-cols-2 gap-2 mb-3">
                 <div class="text-center">
                     <div class="text-2xl font-bold text-gray-300 pulse-on-change" id="elementsCount">2</div>
                     <div class="text-xs text-gray-500 mt-1">Éléments</div>
@@ -695,6 +659,12 @@
                     <div class="text-xs text-gray-500 mt-1">Combos</div>
                 </div>
             </div>
+
+            <!-- Era and Section Display -->
+            <div class="text-center mb-3">
+                <div class="era-section-title" id="eraSectionTitle">TRIBALE - Le Monde</div>
+            </div>
+
             <div class="progress-bar">
                 <div class="progress-fill" id="progressBar" style="width: 0%"></div>
             </div>
@@ -1699,9 +1669,7 @@
             const progress = Math.min(100, (discoveredCount / TOTAL_ELEMENTS) * 100);
             const sectionData = SECTIONS[gameState.currentSection];
 
-            document.getElementById('currentEra').textContent = currentEraData.name;
-            document.getElementById('sectionIndicator').textContent = gameState.currentSection;
-            document.getElementById('currentSection').textContent = sectionData.name;
+            document.getElementById('eraSectionTitle').textContent = `${currentEraData.name} - ${sectionData.name}`;
             document.getElementById('elementsCount').textContent = discoveredCount;
             document.getElementById('combinationsCount').textContent = gameState.combinationsCount;
             document.getElementById('progressBar').style.width = `${progress}%`;
