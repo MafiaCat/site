@@ -569,6 +569,7 @@
             <div class="grid grid-cols-4 gap-2 mb-3">
                 <div class="text-center col-span-2">
                     <div class="era-badge inline-block mb-1" id="currentEra">TRIBALE</div>
+                    <div class="text-xs text-gray-400 mt-1" id="currentSection">1.1: Le Monde</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-yellow-400 pulse-on-change" id="elementsCount">2</div>
@@ -656,6 +657,32 @@
             5: { name: "SPATIALE", threshold: 999 }
         };
 
+        // Sections structure
+        const SECTIONS = {
+            "1.1": { era: 1, name: "Le Monde", desc: "Découvertes de base", requiredDiscoveries: 0 },
+            "1.2": { era: 1, name: "Le Foyer", desc: "Maîtrise", requiredDiscoveries: 15 },
+            "1.3": { era: 1, name: "La Tribu", desc: "Vie sociale", requiredDiscoveries: 30 },
+            "1.4": { era: 1, name: "La Survie", desc: "Outils et Subsistance", requiredDiscoveries: 45 },
+            "2.1": { era: 2, name: "La Sédentarisation", desc: "Agriculture", requiredDiscoveries: 70 },
+            "2.2": { era: 2, name: "Élevage", desc: "Nouvelles Techniques", requiredDiscoveries: 90 },
+            "2.3": { era: 2, name: "Société Organisée", desc: "Communauté", requiredDiscoveries: 120 },
+            "2.4": { era: 2, name: "Conflits", desc: "Expansion", requiredDiscoveries: 150 },
+            "3.1": { era: 3, name: "L'Âge du Métal", desc: "Bronze et Fer", requiredDiscoveries: 180 },
+            "3.2": { era: 3, name: "La Cité", desc: "Infrastructure", requiredDiscoveries: 210 },
+            "3.3": { era: 3, name: "Gouvernance", desc: "Société", requiredDiscoveries: 240 },
+            "3.4": { era: 3, name: "Savoir", desc: "Culture", requiredDiscoveries: 270 },
+            "3.5": { era: 3, name: "Commerce", desc: "Conflit", requiredDiscoveries: 300 },
+            "4.1": { era: 4, name: "Âge de la Vapeur", desc: "Révolution", requiredDiscoveries: 340 },
+            "4.2": { era: 4, name: "Idées", desc: "Changements Sociaux", requiredDiscoveries: 370 },
+            "4.3": { era: 4, name: "Économie", desc: "Conflits Sociaux", requiredDiscoveries: 400 },
+            "4.4": { era: 4, name: "Nouvelles Frontières", desc: "Technologies", requiredDiscoveries: 430 },
+            "5.1": { era: 5, name: "Âge de l'Information", desc: "Internet", requiredDiscoveries: 470 },
+            "5.2": { era: 5, name: "Ère de l'IA", desc: "Intelligence Artificielle", requiredDiscoveries: 510 },
+            "5.3": { era: 5, name: "Conquête Spatiale", desc: "Espace", requiredDiscoveries: 550 },
+            "5.4": { era: 5, name: "Biotechnologie", desc: "Transhumanisme", requiredDiscoveries: 580 },
+            "5.5": { era: 5, name: "Avenir", desc: "La Planète", requiredDiscoveries: 610 }
+        };
+
         const ACHIEVEMENTS = {
             "first_combination": { name: "✨ Premier Pas", desc: "Réaliser votre première combinaison", check: (state) => state.combinationsCount >= 1, alwaysShow: true },
             "laborantin": { name: "🧪 Laborantin", desc: "Réaliser 10 combinaisons", check: (state) => state.combinationsCount >= 10, alwaysShow: true },
@@ -693,6 +720,7 @@
         // Game State
         let gameState = {
             currentEra: 1,
+            currentSection: "1.1",
             elements: [
                 { name: "Humain", icon: "👤", discovered: true, new: false },
                 { name: "Terre", icon: "🏞️", discovered: true, new: false }
@@ -1446,12 +1474,59 @@
             }, 3000);
         }
 
+        // Get current unlocked section based on discoveries
+        function getCurrentSection() {
+            const discoveredCount = gameState.elements.filter(e => e.discovered).length;
+            let currentSection = "1.1";
+
+            for (const [sectionId, sectionData] of Object.entries(SECTIONS)) {
+                if (discoveredCount >= sectionData.requiredDiscoveries) {
+                    currentSection = sectionId;
+                }
+            }
+
+            return currentSection;
+        }
+
+        // Check section progression
+        function checkSectionProgression() {
+            const newSection = getCurrentSection();
+            if (newSection !== gameState.currentSection) {
+                const oldSection = gameState.currentSection;
+                gameState.currentSection = newSection;
+                const sectionData = SECTIONS[newSection];
+
+                showSectionTransition(sectionData);
+
+                if (sectionData.era !== gameState.currentEra) {
+                    gameState.currentEra = sectionData.era;
+                    updateEraTheme();
+                }
+            }
+        }
+
+        // Show section transition
+        function showSectionTransition(sectionData) {
+            const notif = document.createElement('div');
+            notif.className = 'achievement-notification';
+            notif.innerHTML = `
+                <div class="text-xl mb-1">🎉</div>
+                <div class="text-base font-bold">Nouvelle Section !</div>
+                <div class="text-sm">Section ${gameState.currentSection} : ${sectionData.name}</div>
+                <div class="text-xs text-gray-400 mt-1">${sectionData.desc}</div>
+            `;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 4000);
+        }
+
         function updateStats() {
             const discoveredCount = gameState.elements.filter(e => e.discovered).length;
             const currentEraData = ERAS[gameState.currentEra];
             const progress = Math.min(100, (discoveredCount / currentEraData.threshold) * 100);
+            const sectionData = SECTIONS[gameState.currentSection];
 
             document.getElementById('currentEra').textContent = currentEraData.name;
+            document.getElementById('currentSection').textContent = `${gameState.currentSection}: ${sectionData.name}`;
             document.getElementById('elementsCount').textContent = discoveredCount;
             document.getElementById('combinationsCount').textContent = gameState.combinationsCount;
             document.getElementById('progressBar').style.width = `${progress}%`;
