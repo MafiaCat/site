@@ -353,9 +353,10 @@
                 Créer !
             </button>
 
-            <div class="grid grid-cols-3 gap-2">
+            <div class="grid grid-cols-4 gap-2">
                 <button id="resetBtn" class="mobile-btn">Effacer</button>
-                <button id="hintBtn" class="mobile-btn mobile-btn-gold">💡 Indice</button>
+                <button id="hintBtn" class="mobile-btn mobile-btn-gold">💡</button>
+                <button id="autoBtn" class="mobile-btn" style="background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%); border: none;">⚡</button>
                 <button id="achievementsBtn" class="mobile-btn mobile-btn-green">🏆</button>
             </div>
         </div>
@@ -758,6 +759,69 @@
             document.body.appendChild(modal);
         }
 
+        // Auto-combine: automatically performs the next valid combination
+        function autoCombine() {
+            const discoveredNames = gameState.elements.filter(e => e.discovered).map(e => e.name);
+            const possibleCombinations = [];
+
+            // Find all possible combinations with current elements
+            for (const key in COMBINATIONS) {
+                const [elem1, elem2] = key.split('+');
+                const combo = COMBINATIONS[key];
+
+                // Check if both elements are discovered and result is not
+                if (discoveredNames.includes(elem1) && discoveredNames.includes(elem2)) {
+                    const alreadyDiscovered = gameState.elements.find(e => e.name === combo.result);
+                    if (!alreadyDiscovered) {
+                        possibleCombinations.push({ elem1, elem2 });
+                    }
+                }
+            }
+
+            if (possibleCombinations.length === 0) {
+                // No combinations available
+                const modal = document.createElement('div');
+                modal.className = 'discovery-modal';
+                modal.innerHTML = `
+                    <div class="discovery-content">
+                        <div class="text-6xl mb-4">✨</div>
+                        <h2 class="text-xl font-bold mb-3 text-purple-400">Aucune combinaison disponible</h2>
+                        <p class="text-base mb-4">Tu as découvert toutes les combinaisons possibles !</p>
+                        <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine">
+                            D'accord
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                return;
+            }
+
+            // Pick random combination
+            const combo = possibleCombinations[Math.floor(Math.random() * possibleCombinations.length)];
+
+            // Find the element objects
+            const element1 = gameState.elements.find(e => e.name === combo.elem1);
+            const element2 = gameState.elements.find(e => e.name === combo.elem2);
+
+            if (!element1 || !element2) return;
+
+            // Clear current selection
+            gameState.selectedElements = [];
+
+            // Select the two elements
+            gameState.selectedElements.push(element1);
+            gameState.selectedElements.push(element2);
+
+            // Update UI
+            updateCombineZone();
+            renderElements();
+
+            // Auto-combine after a short delay for visual feedback
+            setTimeout(() => {
+                combineElements();
+            }, 500);
+        }
+
         function checkEraProgression() {
             const discoveredCount = gameState.elements.filter(e => e.discovered).length;
             const currentEraData = ERAS[gameState.currentEra];
@@ -805,6 +869,7 @@
         };
 
         document.getElementById('hintBtn').onclick = showHint;
+        document.getElementById('autoBtn').onclick = autoCombine;
         document.getElementById('achievementsBtn').onclick = showAchievementsModal;
         document.getElementById('combineBtn').onclick = combineElements;
 
