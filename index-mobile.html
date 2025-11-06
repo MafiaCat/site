@@ -25,7 +25,15 @@
             color: #e0e0e0;
             overflow-x: hidden;
             touch-action: manipulation;
+            transition: background 1s ease;
         }
+
+        /* Thèmes par ère */
+        body.era-1 { background: linear-gradient(135deg, #4a2c2a 0%, #2c1810 50%, #1a0f0a 100%); }
+        body.era-2 { background: linear-gradient(135deg, #2d4a2c 0%, #1a3518 50%, #0f1f0e 100%); }
+        body.era-3 { background: linear-gradient(135deg, #3d3d5c 0%, #2a2a45 50%, #1a1a2e 100%); }
+        body.era-4 { background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #0d0d0d 100%); }
+        body.era-5 { background: linear-gradient(135deg, #0a0a2e 0%, #1a1a3e 50%, #2a2a5e 100%); }
 
         h1, h2, h3 {
             font-family: 'Cinzel', serif;
@@ -360,17 +368,25 @@
                 <button id="autoBtn" class="mobile-btn" style="background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%); border: none;">⚡</button>
                 <button id="achievementsBtn" class="mobile-btn mobile-btn-green">🏆</button>
             </div>
+
+            <button id="debugEraBtn" class="mobile-btn mt-2 opacity-50" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); border: none; font-size: 0.65rem;">
+                🚀 DEBUG
+            </button>
         </div>
     </div>
 
     <!-- Elements Grid -->
     <div class="max-w-2xl mx-auto">
         <div class="bg-black bg-opacity-30 backdrop-blur-md rounded-2xl p-4 border border-white border-opacity-10">
-            <h2 class="text-xl font-bold mb-4 flex items-center justify-center gap-2">
-                <span class="sparkle">✨</span>
-                Tes Éléments
-                <span class="sparkle">✨</span>
-            </h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span class="sparkle">✨</span>
+                    Éléments Actifs
+                </h2>
+                <button id="libraryBtn" class="px-3 py-1 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white rounded-full transition-all font-semibold text-xs">
+                    📚
+                </button>
+            </div>
             <div id="elementsGrid" class="grid grid-cols-3 gap-3">
                 <!-- Elements will be inserted here -->
             </div>
@@ -488,12 +504,37 @@
             updateStats();
         }
 
+        // Check if an element is still useful for combinations
+        function isElementUseful(elementName) {
+            const discoveredNames = gameState.elements.filter(e => e.discovered).map(e => e.name);
+
+            // Check if this element can be used in any combination that hasn't been discovered yet
+            for (const key in COMBINATIONS) {
+                const [elem1, elem2] = key.split('+');
+                const combo = COMBINATIONS[key];
+
+                // If this element is part of the combination
+                if (elem1 === elementName || elem2 === elementName) {
+                    // Check if the other element is discovered
+                    const otherElem = elem1 === elementName ? elem2 : elem1;
+                    if (discoveredNames.includes(otherElem)) {
+                        // Check if the result hasn't been discovered yet
+                        const alreadyDiscovered = gameState.elements.find(e => e.name === combo.result);
+                        if (!alreadyDiscovered) {
+                            return true; // Element is still useful
+                        }
+                    }
+                }
+            }
+            return false; // Element is not useful anymore
+        }
+
         function renderElements() {
             const grid = document.getElementById('elementsGrid');
             grid.innerHTML = '';
 
             gameState.elements
-                .filter(e => e.discovered)
+                .filter(e => e.discovered && isElementUseful(e.name))
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .forEach(element => {
                     const card = document.createElement('div');
@@ -623,6 +664,43 @@
             `;
             document.body.appendChild(notif);
             setTimeout(() => notif.remove(), 3000);
+        }
+
+        // Show library (all discovered elements)
+        function showLibrary() {
+            const discoveredElements = gameState.elements
+                .filter(e => e.discovered)
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+            const elementsList = discoveredElements.map(elem => {
+                const isUseful = isElementUseful(elem.name);
+                return `
+                    <div class="bg-white bg-opacity-${isUseful ? '10' : '5'} rounded-lg p-2 mb-2 flex items-center gap-2 ${isUseful ? '' : 'opacity-50'}">
+                        <div class="text-2xl">${elem.icon}</div>
+                        <div class="flex-1 text-left">
+                            <div class="font-bold text-sm ${isUseful ? 'text-white' : 'text-gray-500'}">${elem.name}</div>
+                            <div class="text-xs ${isUseful ? 'text-green-400' : 'text-gray-500'}">${isUseful ? '✓ Actif' : '○ Archivé'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const modal = document.createElement('div');
+            modal.className = 'discovery-modal';
+            modal.innerHTML = `
+                <div class="discovery-content">
+                    <div class="text-5xl mb-4">📚</div>
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400">Bibliothèque</h2>
+                    <p class="text-base mb-4">${discoveredElements.length} éléments découverts</p>
+                    <div class="max-h-96 overflow-y-auto">
+                        ${elementsList}
+                    </div>
+                    <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine mt-4">
+                        Fermer
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         function showAchievementsModal() {
@@ -829,12 +907,72 @@
             }, 500);
         }
 
+        // Update era theme
+        function updateEraTheme() {
+            // Remove all era classes
+            document.body.classList.remove('era-1', 'era-2', 'era-3', 'era-4', 'era-5');
+            // Add current era class
+            document.body.classList.add(`era-${gameState.currentEra}`);
+        }
+
+        // DEBUG: Force jump to next era
+        function debugJumpToNextEra() {
+            if (gameState.currentEra >= 5) {
+                alert('Déjà à la dernière ère !');
+                return;
+            }
+
+            gameState.currentEra++;
+            const nextEra = ERAS[gameState.currentEra];
+
+            // Discover elements based on era thresholds
+            let targetCount = nextEra.threshold;
+
+            // Discover all possible elements up to threshold
+            let attempts = 0;
+            while (gameState.elements.filter(e => e.discovered).length < targetCount && attempts < 1000) {
+                attempts++;
+
+                const discoveredNames = gameState.elements.filter(e => e.discovered).map(e => e.name);
+
+                for (const key in COMBINATIONS) {
+                    const [elem1, elem2] = key.split('+');
+                    const combo = COMBINATIONS[key];
+
+                    if (discoveredNames.includes(elem1) && discoveredNames.includes(elem2)) {
+                        ensureElementExists(elem1);
+                        ensureElementExists(elem2);
+
+                        const exists = gameState.elements.find(e => e.name === combo.result);
+                        if (!exists) {
+                            gameState.elements.push({
+                                name: combo.result,
+                                icon: combo.icon,
+                                discovered: true,
+                                new: false
+                            });
+
+                            if (gameState.elements.filter(e => e.discovered).length >= targetCount) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            updateEraTheme();
+            updateStats();
+            renderElements();
+            showEraTransition();
+        }
+
         function checkEraProgression() {
             const discoveredCount = gameState.elements.filter(e => e.discovered).length;
             const currentEraData = ERAS[gameState.currentEra];
 
             if (discoveredCount >= currentEraData.threshold && gameState.currentEra < 5) {
                 gameState.currentEra++;
+                updateEraTheme();
                 showEraTransition();
             }
         }
@@ -878,10 +1016,13 @@
         document.getElementById('hintBtn').onclick = showHint;
         document.getElementById('autoBtn').onclick = autoCombine;
         document.getElementById('achievementsBtn').onclick = showAchievementsModal;
+        document.getElementById('libraryBtn').onclick = showLibrary;
+        document.getElementById('debugEraBtn').onclick = debugJumpToNextEra;
         document.getElementById('combineBtn').onclick = combineElements;
 
         // Initialize
         init();
+        updateEraTheme(); // Set initial theme
 
         // Prevent zoom on double-tap
         let lastTouchEnd = 0;

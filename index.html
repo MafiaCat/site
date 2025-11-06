@@ -15,7 +15,15 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             color: #e0e0e0;
+            transition: background 1s ease;
         }
+
+        /* Thèmes par ère */
+        body.era-1 { background: linear-gradient(135deg, #4a2c2a 0%, #2c1810 50%, #1a0f0a 100%); }
+        body.era-2 { background: linear-gradient(135deg, #2d4a2c 0%, #1a3518 50%, #0f1f0e 100%); }
+        body.era-3 { background: linear-gradient(135deg, #3d3d5c 0%, #2a2a45 50%, #1a1a2e 100%); }
+        body.era-4 { background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #0d0d0d 100%); }
+        body.era-5 { background: linear-gradient(135deg, #0a0a2e 0%, #1a1a3e 50%, #2a2a5e 100%); }
 
         h1, h2, h3 {
             font-family: 'Cinzel', serif;
@@ -285,11 +293,16 @@
         <!-- Left Panel: Elements -->
         <div class="lg:col-span-2">
             <div class="bg-black bg-opacity-30 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-10">
-                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-                    <span class="sparkle">✨</span>
-                    Tes Éléments
-                    <span class="sparkle">✨</span>
-                </h2>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold flex items-center gap-3">
+                        <span class="sparkle">✨</span>
+                        Éléments Actifs
+                        <span class="sparkle">✨</span>
+                    </h2>
+                    <button id="libraryBtn" class="px-4 py-2 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white rounded-full transition-all font-semibold text-sm">
+                        📚 Bibliothèque
+                    </button>
+                </div>
                 <div id="elementsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <!-- Elements will be inserted here -->
                 </div>
@@ -330,6 +343,10 @@
 
                 <button id="achievementsBtn" class="w-full mt-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white py-2 px-4 rounded-full transition-all font-semibold">
                     🏆 Succès
+                </button>
+
+                <button id="debugEraBtn" class="w-full mt-3 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white py-2 px-4 rounded-full transition-all font-semibold text-xs opacity-50 hover:opacity-100">
+                    🚀 DEBUG: Ère Suivante
                 </button>
 
                 <!-- History -->
@@ -449,13 +466,38 @@
             updateStats();
         }
 
-        // Render elements grid
+        // Check if an element is still useful for combinations
+        function isElementUseful(elementName) {
+            const discoveredNames = gameState.elements.filter(e => e.discovered).map(e => e.name);
+
+            // Check if this element can be used in any combination that hasn't been discovered yet
+            for (const key in COMBINATIONS) {
+                const [elem1, elem2] = key.split('+');
+                const combo = COMBINATIONS[key];
+
+                // If this element is part of the combination
+                if (elem1 === elementName || elem2 === elementName) {
+                    // Check if the other element is discovered
+                    const otherElem = elem1 === elementName ? elem2 : elem1;
+                    if (discoveredNames.includes(otherElem)) {
+                        // Check if the result hasn't been discovered yet
+                        const alreadyDiscovered = gameState.elements.find(e => e.name === combo.result);
+                        if (!alreadyDiscovered) {
+                            return true; // Element is still useful
+                        }
+                    }
+                }
+            }
+            return false; // Element is not useful anymore
+        }
+
+        // Render elements grid (only useful elements)
         function renderElements() {
             const grid = document.getElementById('elementsGrid');
             grid.innerHTML = '';
 
             gameState.elements
-                .filter(e => e.discovered)
+                .filter(e => e.discovered && isElementUseful(e.name))
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .forEach(element => {
                     const card = document.createElement('div');
@@ -603,6 +645,43 @@
             `;
             document.body.appendChild(notif);
             setTimeout(() => notif.remove(), 3000);
+        }
+
+        // Show library (all discovered elements)
+        function showLibrary() {
+            const discoveredElements = gameState.elements
+                .filter(e => e.discovered)
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+            const elementsList = discoveredElements.map(elem => {
+                const isUseful = isElementUseful(elem.name);
+                return `
+                    <div class="bg-white bg-opacity-${isUseful ? '10' : '5'} rounded-lg p-3 mb-2 flex items-center gap-3 ${isUseful ? '' : 'opacity-50'}">
+                        <div class="text-3xl">${elem.icon}</div>
+                        <div class="flex-1">
+                            <div class="font-bold ${isUseful ? 'text-white' : 'text-gray-500'}">${elem.name}</div>
+                            <div class="text-xs ${isUseful ? 'text-green-400' : 'text-gray-500'}">${isUseful ? '✓ Actif' : '○ Archivé'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const modal = document.createElement('div');
+            modal.className = 'discovery-modal';
+            modal.innerHTML = `
+                <div class="discovery-content">
+                    <div class="text-6xl mb-4">📚</div>
+                    <h2 class="text-3xl font-bold mb-4 text-yellow-400">Bibliothèque</h2>
+                    <p class="text-lg mb-6">${discoveredElements.length} éléments découverts</p>
+                    <div class="max-h-96 overflow-y-auto text-left">
+                        ${elementsList}
+                    </div>
+                    <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine mt-6">
+                        Fermer
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         // Show achievements modal
@@ -818,6 +897,69 @@
             }, 500);
         }
 
+        // Update era theme
+        function updateEraTheme() {
+            // Remove all era classes
+            document.body.classList.remove('era-1', 'era-2', 'era-3', 'era-4', 'era-5');
+            // Add current era class
+            document.body.classList.add(`era-${gameState.currentEra}`);
+        }
+
+        // DEBUG: Force jump to next era
+        function debugJumpToNextEra() {
+            if (gameState.currentEra >= 5) {
+                alert('Déjà à la dernière ère !');
+                return;
+            }
+
+            gameState.currentEra++;
+            const nextEra = ERAS[gameState.currentEra];
+
+            // Add all elements needed for this era to be useful
+            // Find all combinations that produce elements for this era
+            const elementsToAdd = new Set();
+
+            // Discover elements based on era thresholds
+            let targetCount = nextEra.threshold;
+
+            // Discover all possible elements up to threshold
+            let attempts = 0;
+            while (gameState.elements.filter(e => e.discovered).length < targetCount && attempts < 1000) {
+                attempts++;
+
+                const discoveredNames = gameState.elements.filter(e => e.discovered).map(e => e.name);
+
+                for (const key in COMBINATIONS) {
+                    const [elem1, elem2] = key.split('+');
+                    const combo = COMBINATIONS[key];
+
+                    if (discoveredNames.includes(elem1) && discoveredNames.includes(elem2)) {
+                        ensureElementExists(elem1);
+                        ensureElementExists(elem2);
+
+                        const exists = gameState.elements.find(e => e.name === combo.result);
+                        if (!exists) {
+                            gameState.elements.push({
+                                name: combo.result,
+                                icon: combo.icon,
+                                discovered: true,
+                                new: false
+                            });
+
+                            if (gameState.elements.filter(e => e.discovered).length >= targetCount) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            updateEraTheme();
+            updateStats();
+            renderElements();
+            showEraTransition();
+        }
+
         // Check era progression
         function checkEraProgression() {
             const discoveredCount = gameState.elements.filter(e => e.discovered).length;
@@ -825,6 +967,7 @@
 
             if (discoveredCount >= currentEraData.threshold && gameState.currentEra < 5) {
                 gameState.currentEra++;
+                updateEraTheme();
                 showEraTransition();
             }
         }
@@ -895,11 +1038,18 @@
         // Achievements button
         document.getElementById('achievementsBtn').onclick = showAchievementsModal;
 
+        // Library button
+        document.getElementById('libraryBtn').onclick = showLibrary;
+
+        // Debug era button
+        document.getElementById('debugEraBtn').onclick = debugJumpToNextEra;
+
         // Combine button
         document.getElementById('combineBtn').onclick = combineElements;
 
         // Initialize
         init();
+        updateEraTheme(); // Set initial theme
     </script>
 </body>
 </html>
