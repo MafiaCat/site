@@ -1,565 +1,624 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Label Confiance - L'excellence humaine dans la profession d'avocat</title>
-    <meta name="description" content="Le premier label qui valorise l'humain au cœur des cabinets d'avocats. Une démarche d'excellence éthique et bienveillante.">
+    <title>🏛️ Générateur de Civilisation - De la Tribu à l'Espace</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #fafafa;
-            color: #1a1a1a;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 600;
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
         }
 
-        .text-serif {
-            font-family: 'Cormorant Garamond', serif;
-        }
-
-        /* Glassmorphism effect */
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
+        .element-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Gradient backgrounds */
-        .gradient-blue {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1e40af 100%);
+        .element-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-color: rgba(255,215,0,0.5);
         }
 
-        .gradient-dark {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        .element-card.selected {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.4);
+            background: linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.1) 100%);
         }
 
-        .gradient-subtle {
-            background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+        .element-card.new-discovery {
+            animation: pulse 1s ease-in-out;
         }
 
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,215,0,0.6); }
         }
 
-        .float {
-            animation: float 6s ease-in-out infinite;
+        .era-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .narration-box {
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+            border-left: 4px solid #ffd700;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-style: italic;
+            animation: slideIn 0.5s ease-out;
         }
 
-        .fade-in-up {
-            animation: fadeInUp 0.8s ease-out forwards;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
+        .combine-zone {
+            background: rgba(255,215,0,0.1);
+            border: 3px dashed rgba(255,215,0,0.4);
+            border-radius: 16px;
+            padding: 30px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
 
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        .combine-zone.ready {
+            border-color: #ffd700;
+            background: rgba(255,215,0,0.2);
+            box-shadow: 0 0 30px rgba(255,215,0,0.3);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #3b82f6;
-            border-radius: 5px;
+        .stats-panel {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #1e40af;
-        }
-
-        /* Hover effects */
-        .card-hover {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Text gradient */
-        .text-gradient {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Button styles */
-        .btn-primary {
-            background: #3b82f6;
-            color: #ffffff;
-            padding: 16px 40px;
+        .btn-combine {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 32px;
             border-radius: 50px;
             font-weight: 600;
+            border: none;
+            cursor: pointer;
             transition: all 0.3s ease;
-            display: inline-block;
-            text-decoration: none;
-            border: 2px solid #3b82f6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
         }
 
-        .btn-primary:hover {
-            background: #1e40af;
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        .btn-combine:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: #0f172a;
-            padding: 16px 40px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-block;
-            text-decoration: none;
-            border: 2px solid #3b82f6;
+        .btn-combine:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: scale(1);
         }
 
-        .btn-secondary:hover {
-            background: #3b82f6;
-            color: #ffffff;
-            transform: translateY(-2px);
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
         }
 
-        /* Navigation */
-        nav {
-            transition: all 0.3s ease;
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #ffd700 100%);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(255,215,0,0.5);
         }
 
-        nav.scrolled {
-            background: rgba(255, 255, 255, 0.95);
+        .element-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .discovery-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
             backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
         }
 
-        /* Decorative elements */
-        .deco-line {
-            width: 60px;
-            height: 3px;
-            background: #3b82f6;
-            margin: 0 auto;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .deco-circle {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6 0%, #93c5fd 100%);
-            position: absolute;
-            opacity: 0.1;
+        .discovery-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            animation: scaleIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .sparkle {
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .era-transition {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: eraFade 3s ease-in-out forwards;
+        }
+
+        @keyframes eraFade {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; pointer-events: none; }
         }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        trust: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            200: '#bfdbfe',
-                            300: '#93c5fd',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1e40af',
-                            800: '#1e3a8a',
-                            900: '#1e293b',
-                        },
-                        dark: {
-                            900: '#0f172a',
-                            800: '#1e293b',
-                            700: '#334155',
-                        }
-                    },
-                    fontFamily: {
-                        'sans': ['Plus Jakarta Sans', 'sans-serif'],
-                        'serif': ['Cormorant Garamond', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="antialiased">
-    <!-- Navigation -->
-    <nav id="navbar" class="fixed w-full top-0 z-50 py-6 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex items-center justify-between">
-                <!-- Logo -->
-                <a href="index.html" class="flex items-center gap-4 group">
-                    <div class="w-14 h-14 rounded-full gradient-blue flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <span class="text-2xl font-bold text-white">LC</span>
-                    </div>
-                    <div class="hidden md:block">
-                        <div class="text-xl font-serif font-bold text-dark-900">Label Confiance</div>
-                        <div class="text-xs text-gray-600 tracking-wide">L'EXCELLENCE HUMAINE</div>
-                    </div>
-                </a>
+<body class="p-4 md:p-8">
+    <!-- Header -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-purple-400 to-blue-400">
+                🏛️ Générateur de Civilisation
+            </h1>
+            <p class="text-gray-400 text-lg">De la tribu primitive à la conquête spatiale</p>
+        </div>
 
-                <!-- Desktop Menu -->
-                <div class="hidden lg:flex items-center gap-10">
-                    <a href="index.html" class="text-sm font-semibold text-dark-900 hover:text-trust-500 transition-colors">Accueil</a>
-                    <a href="le-label.html" class="text-sm font-semibold text-gray-600 hover:text-trust-500 transition-colors">Le Label</a>
-                    <a href="adherer.html" class="text-sm font-semibold text-gray-600 hover:text-trust-500 transition-colors">Adhérer</a>
-                    <a href="cabinets.html" class="text-sm font-semibold text-gray-600 hover:text-trust-500 transition-colors">Cabinets</a>
-                    <a href="contact.html" class="text-sm font-semibold text-gray-600 hover:text-trust-500 transition-colors">Contact</a>
+        <!-- Stats Panel -->
+        <div class="stats-panel mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="era-badge inline-block mb-2" id="currentEra">ÈRE TRIBALE</div>
+                    <div class="text-sm text-gray-400 mt-2">Ère actuelle</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-yellow-400" id="elementsCount">4</div>
+                    <div class="text-sm text-gray-400 mt-2">Éléments découverts</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-400" id="combinationsCount">0</div>
+                    <div class="text-sm text-gray-400 mt-2">Combinaisons réalisées</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-400" id="progressPercent">0%</div>
+                    <div class="text-sm text-gray-400 mt-2">Progression de l'ère</div>
+                </div>
+            </div>
+            <div class="progress-bar mt-6">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Panel: Elements -->
+        <div class="lg:col-span-2">
+            <div class="bg-black bg-opacity-30 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-10">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span class="sparkle">✨</span>
+                    Tes Éléments
+                    <span class="sparkle">✨</span>
+                </h2>
+                <div id="elementsGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Elements will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Combination Zone -->
+        <div class="lg:col-span-1">
+            <div class="bg-black bg-opacity-30 backdrop-blur-md rounded-2xl p-6 border border-white border-opacity-10 sticky top-8">
+                <h2 class="text-2xl font-bold mb-6 text-center">🔮 Combinaison</h2>
+
+                <div class="combine-zone" id="combineZone">
+                    <div id="selectedElements" class="text-center">
+                        <p class="text-gray-400 mb-4">Sélectionne 2 éléments à combiner</p>
+                        <div class="flex justify-center gap-4 flex-wrap">
+                            <div id="slot1" class="w-24 h-24 bg-white bg-opacity-10 rounded-lg flex items-center justify-center text-4xl"></div>
+                            <div class="text-3xl">+</div>
+                            <div id="slot2" class="w-24 h-24 bg-white bg-opacity-10 rounded-lg flex items-center justify-center text-4xl"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- CTA Button -->
-                <a href="adherer.html" class="hidden lg:block btn-primary text-sm">Obtenir le Label</a>
-
-                <!-- Mobile menu button -->
-                <button onclick="toggleMobileMenu()" class="lg:hidden">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
+                <button id="combineBtn" class="btn-combine w-full mt-6" disabled>
+                    Créer !
                 </button>
-            </div>
 
-            <!-- Mobile Menu -->
-            <div id="mobileMenu" class="hidden lg:hidden mt-8 pb-6">
-                <div class="flex flex-col gap-6">
-                    <a href="index.html" class="text-sm font-semibold text-dark-900">Accueil</a>
-                    <a href="le-label.html" class="text-sm font-semibold text-gray-600">Le Label</a>
-                    <a href="adherer.html" class="text-sm font-semibold text-gray-600">Adhérer</a>
-                    <a href="cabinets.html" class="text-sm font-semibold text-gray-600">Cabinets</a>
-                    <a href="contact.html" class="text-sm font-semibold text-gray-600">Contact</a>
-                    <a href="adherer.html" class="btn-primary text-sm text-center mt-4">Obtenir le Label</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+                <button id="resetBtn" class="w-full mt-3 bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full transition-all">
+                    Réinitialiser la sélection
+                </button>
 
-    <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden">
-        <!-- Decorative elements -->
-        <div class="deco-circle" style="top: 10%; left: 5%;"></div>
-        <div class="deco-circle" style="bottom: 15%; right: 8%;"></div>
-
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <!-- Left content -->
-                <div class="fade-in-up">
-                    <div class="inline-block px-6 py-2 rounded-full glass mb-8">
-                        <span class="text-sm font-semibold text-gray-700">Premier label humain pour avocats</span>
-                    </div>
-
-                    <h1 class="text-5xl lg:text-7xl font-serif font-bold text-dark-900 leading-tight mb-8">
-                        L'excellence humaine au cœur de votre
-                        <span class="text-gradient">cabinet</span>
-                    </h1>
-
-                    <p class="text-xl text-gray-600 leading-relaxed mb-12 max-w-xl">
-                        Valorisez vos engagements éthiques, inspirez vos clients et construisez un cabinet où l'humain retrouve sa juste place.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="le-label.html" class="btn-primary text-center">Découvrir le Label</a>
-                        <a href="adherer.html" class="btn-secondary text-center">Commencer ma démarche</a>
-                    </div>
-                </div>
-
-                <!-- Right visual -->
-                <div class="relative float">
-                    <div class="relative w-full h-[500px] rounded-3xl overflow-hidden shadow-2xl">
-                        <div class="absolute inset-0 gradient-subtle flex items-center justify-center">
-                            <div class="text-center">
-                                <div class="w-40 h-40 mx-auto mb-8 rounded-full gradient-blue flex items-center justify-center shadow-xl">
-                                    <svg class="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                </div>
-                                <h3 class="text-2xl font-serif font-bold text-dark-900 mb-4">L'humain d'abord</h3>
-                                <p class="text-gray-600 max-w-sm mx-auto">Une démarche qui place vos collaborateurs et vos valeurs au centre</p>
-                            </div>
-                        </div>
+                <!-- History -->
+                <div class="mt-8">
+                    <h3 class="text-lg font-bold mb-4">📜 Dernières découvertes</h3>
+                    <div id="historyList" class="space-y-2 max-h-64 overflow-y-auto">
+                        <p class="text-gray-500 text-sm text-center py-8">Aucune découverte pour le moment</p>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="py-20 bg-dark-900 text-white">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 text-center">
-                <div>
-                    <div class="text-5xl font-serif font-bold text-trust-400 mb-3">50+</div>
-                    <div class="text-sm uppercase tracking-wider text-gray-400">Cabinets labellisés</div>
-                </div>
-                <div>
-                    <div class="text-5xl font-serif font-bold text-trust-400 mb-3">500+</div>
-                    <div class="text-sm uppercase tracking-wider text-gray-400">Avocats accompagnés</div>
-                </div>
-                <div>
-                    <div class="text-5xl font-serif font-bold text-trust-400 mb-3">95%</div>
-                    <div class="text-sm uppercase tracking-wider text-gray-400">Satisfaction</div>
-                </div>
-                <div>
-                    <div class="text-5xl font-serif font-bold text-trust-400 mb-3">7</div>
-                    <div class="text-sm uppercase tracking-wider text-gray-400">Piliers d'excellence</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Values Section -->
-    <section class="py-32 gradient-subtle">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="text-center mb-20">
-                <div class="deco-line mb-6"></div>
-                <h2 class="text-5xl font-serif font-bold text-dark-900 mb-6">Nos valeurs fondamentales</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Le Label Confiance repose sur quatre piliers qui guident notre démarche d'accompagnement
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Value 1 -->
-                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg text-center">
-                    <div class="w-16 h-16 mx-auto mb-6 rounded-full gradient-blue flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-serif font-bold text-dark-900 mb-4">Sincérité</h3>
-                    <p class="text-gray-600 leading-relaxed">Un engagement authentique et transparent, loin des labels de façade</p>
-                </div>
-
-                <!-- Value 2 -->
-                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg text-center">
-                    <div class="w-16 h-16 mx-auto mb-6 rounded-full gradient-blue flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-serif font-bold text-dark-900 mb-4">Équilibre</h3>
-                    <p class="text-gray-600 leading-relaxed">Une approche mesurée, adaptée à votre réalité, sans dogmatisme</p>
-                </div>
-
-                <!-- Value 3 -->
-                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg text-center">
-                    <div class="w-16 h-16 mx-auto mb-6 rounded-full gradient-blue flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-serif font-bold text-dark-900 mb-4">Authenticité</h3>
-                    <p class="text-gray-600 leading-relaxed">Restez fidèle à vos valeurs et à l'identité de votre cabinet</p>
-                </div>
-
-                <!-- Value 4 -->
-                <div class="card-hover bg-white rounded-2xl p-8 shadow-lg text-center">
-                    <div class="w-16 h-16 mx-auto mb-6 rounded-full gradient-blue flex items-center justify-center">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-serif font-bold text-dark-900 mb-4">Progression</h3>
-                    <p class="text-gray-600 leading-relaxed">Un accompagnement dans la durée pour une amélioration continue</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 7 Pillars Preview -->
-    <section class="py-32 bg-white">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                <div>
-                    <div class="deco-line mb-6"></div>
-                    <h2 class="text-5xl font-serif font-bold text-dark-900 mb-8">Les 7 piliers de l'excellence</h2>
-                    <p class="text-xl text-gray-600 leading-relaxed mb-12">
-                        Notre référentiel s'articule autour de 7 dimensions essentielles pour créer un environnement de travail épanouissant et éthique.
-                    </p>
-
-                    <div class="space-y-6">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full gradient-blue flex items-center justify-center flex-shrink-0">
-                                <span class="font-bold text-white">1</span>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-dark-900 mb-2">Relations humaines</h4>
-                                <p class="text-gray-600 text-sm">Communication interne et cohésion d'équipe</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full gradient-blue flex items-center justify-center flex-shrink-0">
-                                <span class="font-bold text-white">2</span>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-dark-900 mb-2">Management éthique</h4>
-                                <p class="text-gray-600 text-sm">Leadership bienveillant et respectueux</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full gradient-blue flex items-center justify-center flex-shrink-0">
-                                <span class="font-bold text-white">3</span>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-dark-900 mb-2">Bien-être et santé mentale</h4>
-                                <p class="text-gray-600 text-sm">Équilibre vie professionnelle et personnelle</p>
-                            </div>
-                        </div>
-                        <div class="text-gray-400 text-sm pl-16">+ 4 autres piliers essentiels</div>
-                    </div>
-
-                    <a href="le-label.html" class="btn-primary mt-10">Découvrir tous les piliers</a>
-                </div>
-
-                <div class="relative">
-                    <div class="aspect-square rounded-3xl gradient-subtle shadow-2xl p-12 flex items-center justify-center">
-                        <div class="text-center">
-                            <div class="text-9xl font-serif font-bold text-gradient mb-6">7</div>
-                            <p class="text-2xl font-serif text-gray-700">Piliers<br>d'excellence</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-32 gradient-dark text-white relative overflow-hidden">
-        <div class="deco-circle" style="top: -50px; right: -50px; opacity: 0.05;"></div>
-
-        <div class="max-w-4xl mx-auto px-6 lg:px-8 text-center relative z-10">
-            <h2 class="text-5xl lg:text-6xl font-serif font-bold mb-8">
-                Prêt à transformer<br>votre cabinet ?
-            </h2>
-            <p class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-                Rejoignez les cabinets pionniers qui placent l'humain au centre de leur pratique professionnelle
-            </p>
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <a href="adherer.html" class="inline-block bg-trust-500 text-white px-12 py-5 rounded-full font-bold text-lg hover:bg-trust-400 transition-all duration-300 hover:scale-105 shadow-xl">
-                    Commencer ma démarche
-                </a>
-                <a href="contact.html" class="inline-block bg-transparent text-white border-2 border-white px-12 py-5 rounded-full font-bold text-lg hover:bg-white hover:text-dark-900 transition-all duration-300">
-                    Nous contacter
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-white py-20 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-                <!-- Column 1 -->
-                <div>
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-full gradient-blue flex items-center justify-center">
-                            <span class="text-sm font-bold text-white">LC</span>
-                        </div>
-                        <span class="font-serif font-bold text-lg">Label Confiance</span>
-                    </div>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        Le premier label qui place l'humain au cœur de la profession d'avocat.
-                    </p>
-                </div>
-
-                <!-- Column 2 -->
-                <div>
-                    <h4 class="font-bold text-dark-900 mb-6">Navigation</h4>
-                    <ul class="space-y-3">
-                        <li><a href="le-label.html" class="text-sm text-gray-600 hover:text-trust-500 transition-colors">Le Label</a></li>
-                        <li><a href="adherer.html" class="text-sm text-gray-600 hover:text-trust-500 transition-colors">Adhérer</a></li>
-                        <li><a href="cabinets.html" class="text-sm text-gray-600 hover:text-trust-500 transition-colors">Cabinets labellisés</a></li>
-                        <li><a href="contact.html" class="text-sm text-gray-600 hover:text-trust-500 transition-colors">Contact</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 3 -->
-                <div>
-                    <h4 class="font-bold text-dark-900 mb-6">Ressources</h4>
-                    <ul class="space-y-3">
-                        <li><a href="le-label.html#faq" class="text-sm text-gray-600 hover:text-trust-500 transition-colors">FAQ</a></li>
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-trust-500 transition-colors">Guide complet</a></li>
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-trust-500 transition-colors">Mentions légales</a></li>
-                        <li><a href="#" class="text-sm text-gray-600 hover:text-trust-500 transition-colors">Confidentialité</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 4 -->
-                <div>
-                    <h4 class="font-bold text-dark-900 mb-6">Contact</h4>
-                    <ul class="space-y-3 text-sm text-gray-600">
-                        <li>contact@labelconfiance.fr</li>
-                        <li>+33 1 23 45 67 89</li>
-                        <li class="pt-4">
-                            <a href="#" class="inline-block w-10 h-10 bg-dark-900 rounded-full flex items-center justify-center hover:bg-trust-500 transition-colors">
-                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                                </svg>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="pt-8 border-t border-gray-200 text-center">
-                <p class="text-sm text-gray-500">© 2024 Label Confiance. Tous droits réservés.</p>
-            </div>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // Mobile menu toggle
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
+        // Game Data
+        const ERAS = {
+            1: { name: "TRIBALE", color: "brown", threshold: 10 },
+            2: { name: "AGRICOLE", color: "green", threshold: 20 },
+            3: { name: "FÉODALE", color: "purple", threshold: 35 },
+            4: { name: "INDUSTRIELLE", color: "gray", threshold: 55 },
+            5: { name: "SPATIALE", color: "blue", threshold: 999 }
+        };
+
+        // Combinations database
+        const COMBINATIONS = {
+            "Peuple+Feu": { result: "Campement", icon: "🏕️", narration: "Les premiers feux rassemblent ton peuple dans la nuit. Un sentiment de sécurité naît." },
+            "Campement+Pierre": { result: "Village", icon: "🏘️", narration: "Les abris se multiplient autour du feu central. Une première communauté permanente naît." },
+            "Peuple+Chasse": { result: "Clan", icon: "👥", narration: "Les chasseurs se regroupent en familles étendues. La hiérarchie tribale commence." },
+            "Feu+Pierre": { result: "Outil", icon: "🔨", narration: "La chaleur façonne la pierre. Tes ancêtres découvrent la fabrication d'outils." },
+            "Chasse+Outil": { result: "Lance", icon: "🔱", narration: "L'outil devient arme. La chasse devient plus efficace et dangereuse." },
+            "Village+Clan": { result: "Tribu", icon: "⛺", narration: "Plusieurs clans s'unissent. La première organisation sociale complexe émerge." },
+            "Feu+Chasse": { result: "Cuisine", icon: "🍖", narration: "La viande cuite change tout. L'humanité gagne en santé et en longévité." },
+            "Tribu+Feu": { result: "Rituel", icon: "🔥", narration: "Le feu devient sacré. Les premiers chamans apparaissent, gardiens des mystères." },
+
+            // Agricultural Era
+            "Pierre+Eau": { result: "Irrigation", icon: "🌊", narration: "L'eau domestiquée transforme le désert en jardin. La civilisation trouve ses racines." },
+            "Village+Graines": { result: "Ferme", icon: "🌾", narration: "Les premières cultures remplacent la cueillette. Une révolution silencieuse commence." },
+            "Ferme+Eau": { result: "Agriculture", icon: "🚜", narration: "Les champs s'étendent à perte de vue. Ton peuple ne connaît plus la famine." },
+            "Tribu+Agriculture": { result: "Civilisation", icon: "🏛️", narration: "L'abondance crée le loisir, le loisir crée l'art. Une civilisation s'éveille." },
+            "Civilisation+Rituel": { result: "Religion", icon: "⛪", narration: "Les croyances s'organisent. Des temples s'élèvent vers les cieux." },
+            "Agriculture+Outil": { result: "Charrue", icon: "🪓", narration: "La terre se soumet à l'acier. La productivité explose." },
+
+            // Feudal Era
+            "Pierre+Feu": { result: "Métal", icon: "⚙️", narration: "La fusion des minerais révèle le bronze, puis le fer. Un nouvel âge commence." },
+            "Métal+Outil": { result: "Épée", icon: "⚔️", narration: "L'outil devient arme de guerre. Les conflits changent d'échelle." },
+            "Civilisation+Épée": { result: "Armée", icon: "🛡️", narration: "Les guerriers s'organisent en formations disciplinées. La conquête devient possible." },
+            "Armée+Village": { result: "Royaume", icon: "👑", narration: "Par la force ou la diplomatie, les terres s'unifient sous une couronne." },
+            "Royaume+Religion": { result: "Empire", icon: "🏰", narration: "Le divin légitime le pouvoir. Un empire s'étend sur des terres lointaines." },
+            "Agriculture+Métal": { result: "Commerce", icon: "💰", narration: "L'excédent devient marchandise. Les routes commerciales relient les civilisations." },
+            "Empire+Commerce": { result: "Richesse", icon: "💎", narration: "L'or afflue dans tes coffres. Ton empire rayonne de splendeur." },
+            "Religion+Royaume": { result: "Loi", icon: "⚖️", narration: "Les commandements divins deviennent code civil. L'ordre règne." },
+
+            // Industrial Era
+            "Métal+Feu": { result: "Forge", icon: "🔥", narration: "Les hauts fourneaux rugissent jour et nuit. L'industrie métallurgique naît." },
+            "Forge+Commerce": { result: "Manufacture", icon: "🏭", narration: "La production artisanale laisse place à l'industrie. Le monde change de visage." },
+            "Pierre+Feu": { result: "Charbon", icon: "🪨", narration: "La pierre noire brûle avec une puissance inouïe. L'ère de l'énergie commence." },
+            "Charbon+Eau": { result: "Vapeur", icon: "💨", narration: "La vapeur sous pression devient force motrice. La révolution industrielle gronde." },
+            "Vapeur+Métal": { result: "Machine", icon: "⚙️", narration: "Les machines remplacent les bras humains. La productivité explose." },
+            "Machine+Commerce": { result: "Usine", icon: "🏭", narration: "Les usines se multiplient. Les villes gonflent de masses ouvrières." },
+            "Usine+Peuple": { result: "Classe ouvrière", icon: "👷", narration: "Une nouvelle classe sociale émerge dans la fumée des cheminées." },
+            "Loi+Peuple": { result: "Démocratie", icon: "🗳️", narration: "Le peuple réclame une voix. Les parlements ouvrent leurs portes." },
+            "Démocratie+Classe ouvrière": { result: "Révolution", icon: "🚩", narration: "Les masses se soulèvent pour leurs droits. Le monde ancien vacille." },
+            "Machine+Outil": { result: "Invention", icon: "💡", narration: "L'innovation accélère. Chaque jour apporte une nouvelle merveille technique." },
+
+            // Space Era
+            "Charbon+Invention": { result: "Électricité", icon: "⚡", narration: "La foudre domestiquée illumine la nuit. L'ère moderne commence vraiment." },
+            "Électricité+Machine": { result: "Ordinateur", icon: "💻", narration: "Les machines pensantes naissent. L'humanité crée son successeur potentiel." },
+            "Ordinateur+Peuple": { result: "Réseau", icon: "🌐", narration: "Le monde entier se connecte. Les frontières deviennent virtuelles." },
+            "Invention+Électricité": { result: "Science", icon: "🔬", narration: "La méthode scientifique triomphe. L'univers révèle ses secrets." },
+            "Science+Métal": { result: "Fusée", icon: "🚀", narration: "L'humanité vise les étoiles. Le premier décollage change tout." },
+            "Fusée+Science": { result: "Station spatiale", icon: "🛰️", narration: "Une présence permanente dans l'espace. La Terre n'est plus la limite." },
+            "Ordinateur+Science": { result: "Intelligence artificielle", icon: "🤖", narration: "Les machines deviennent conscientes. Une nouvelle forme de vie émerge." },
+            "Intelligence artificielle+Peuple": { result: "Singularité", icon: "🌟", narration: "L'humanité transcende sa forme biologique. Une ère post-humaine commence." },
+            "Science+Peuple": { result: "Génie génétique", icon: "🧬", narration: "L'ADN devient code modifiable. L'évolution passe sous contrôle humain." },
+            "Fusée+Peuple": { result: "Colonie spatiale", icon: "🌌", narration: "Les premiers enfants naissent hors de la Terre. L'humanité devient multi-planétaire." }
+        };
+
+        // Game State
+        let gameState = {
+            currentEra: 1,
+            elements: [
+                { name: "Peuple", icon: "👤", discovered: true, new: false },
+                { name: "Feu", icon: "🔥", discovered: true, new: false },
+                { name: "Chasse", icon: "🏹", discovered: true, new: false },
+                { name: "Pierre", icon: "🪨", discovered: true, new: false }
+            ],
+            selectedElements: [],
+            combinationsCount: 0,
+            history: []
+        };
+
+        // Initialize game
+        function init() {
+            renderElements();
+            updateStats();
         }
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
+        // Render elements grid
+        function renderElements() {
+            const grid = document.getElementById('elementsGrid');
+            grid.innerHTML = '';
 
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
+            gameState.elements
+                .filter(e => e.discovered)
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .forEach(element => {
+                    const card = document.createElement('div');
+                    card.className = `element-card ${element.new ? 'new-discovery' : ''} ${gameState.selectedElements.includes(element) ? 'selected' : ''}`;
+                    card.innerHTML = `
+                        <div class="element-icon">${element.icon}</div>
+                        <div class="font-semibold text-center text-sm">${element.name}</div>
+                    `;
+                    card.onclick = () => selectElement(element);
+                    grid.appendChild(card);
+
+                    if (element.new) {
+                        setTimeout(() => {
+                            element.new = false;
+                            card.classList.remove('new-discovery');
+                        }, 1000);
+                    }
+                });
+        }
+
+        // Select element
+        function selectElement(element) {
+            if (gameState.selectedElements.includes(element)) {
+                gameState.selectedElements = gameState.selectedElements.filter(e => e !== element);
+            } else if (gameState.selectedElements.length < 2) {
+                gameState.selectedElements.push(element);
+            } else {
+                gameState.selectedElements = [element];
+            }
+
+            updateCombineZone();
+            renderElements();
+        }
+
+        // Update combine zone
+        function updateCombineZone() {
+            const slot1 = document.getElementById('slot1');
+            const slot2 = document.getElementById('slot2');
+            const combineBtn = document.getElementById('combineBtn');
+            const zone = document.getElementById('combineZone');
+
+            slot1.textContent = gameState.selectedElements[0]?.icon || '';
+            slot2.textContent = gameState.selectedElements[1]?.icon || '';
+
+            const canCombine = gameState.selectedElements.length === 2;
+            combineBtn.disabled = !canCombine;
+
+            if (canCombine) {
+                zone.classList.add('ready');
+            } else {
+                zone.classList.remove('ready');
+            }
+        }
+
+        // Combine elements
+        function combineElements() {
+            if (gameState.selectedElements.length !== 2) return;
+
+            const [elem1, elem2] = gameState.selectedElements;
+            const key1 = `${elem1.name}+${elem2.name}`;
+            const key2 = `${elem2.name}+${elem1.name}`;
+
+            const combination = COMBINATIONS[key1] || COMBINATIONS[key2];
+
+            if (combination) {
+                const exists = gameState.elements.find(e => e.name === combination.result);
+
+                if (!exists) {
+                    // New discovery!
+                    const newElement = {
+                        name: combination.result,
+                        icon: combination.icon,
+                        discovered: true,
+                        new: true
+                    };
+                    gameState.elements.push(newElement);
+                    showDiscoveryModal(newElement, combination.narration);
+
+                    // Add to history
+                    gameState.history.unshift({
+                        from: [elem1.name, elem2.name],
+                        to: combination.result,
+                        icon: combination.icon
+                    });
+                    if (gameState.history.length > 5) gameState.history.pop();
+
+                    // Check era progression
+                    checkEraProgression();
+                } else {
+                    showAlreadyDiscoveredModal(combination.result);
                 }
-            });
-        });
+            } else {
+                showNoResultModal();
+            }
+
+            gameState.combinationsCount++;
+            gameState.selectedElements = [];
+            updateCombineZone();
+            renderElements();
+            updateStats();
+            updateHistory();
+        }
+
+        // Show discovery modal
+        function showDiscoveryModal(element, narration) {
+            const modal = document.createElement('div');
+            modal.className = 'discovery-modal';
+            modal.innerHTML = `
+                <div class="discovery-content">
+                    <div class="text-7xl mb-6">${element.icon}</div>
+                    <h2 class="text-3xl font-bold mb-4 text-yellow-400">Nouvelle découverte !</h2>
+                    <h3 class="text-2xl font-bold mb-6">${element.name}</h3>
+                    <div class="narration-box text-left">
+                        ${narration}
+                    </div>
+                    <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine mt-6">
+                        Continuer
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Show already discovered modal
+        function showAlreadyDiscoveredModal(elementName) {
+            const modal = document.createElement('div');
+            modal.className = 'discovery-modal';
+            modal.innerHTML = `
+                <div class="discovery-content">
+                    <div class="text-6xl mb-4">🔄</div>
+                    <h2 class="text-2xl font-bold mb-4 text-gray-400">Déjà découvert</h2>
+                    <p class="text-lg mb-6">Tu as déjà découvert <span class="text-yellow-400 font-bold">${elementName}</span></p>
+                    <button onclick="this.closest('.discovery-modal').remove()" class="bg-gray-700 hover:bg-gray-600 text-white py-3 px-8 rounded-full">
+                        D'accord
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Show no result modal
+        function showNoResultModal() {
+            const modal = document.createElement('div');
+            modal.className = 'discovery-modal';
+            modal.innerHTML = `
+                <div class="discovery-content">
+                    <div class="text-6xl mb-4">❌</div>
+                    <h2 class="text-2xl font-bold mb-4 text-red-400">Aucun résultat</h2>
+                    <p class="text-lg mb-6">Cette combinaison ne mène à rien... pour l'instant.</p>
+                    <button onclick="this.closest('.discovery-modal').remove()" class="bg-gray-700 hover:bg-gray-600 text-white py-3 px-8 rounded-full">
+                        Réessayer
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Check era progression
+        function checkEraProgression() {
+            const discoveredCount = gameState.elements.filter(e => e.discovered).length;
+            const currentEraData = ERAS[gameState.currentEra];
+
+            if (discoveredCount >= currentEraData.threshold && gameState.currentEra < 5) {
+                gameState.currentEra++;
+                showEraTransition();
+            }
+        }
+
+        // Show era transition
+        function showEraTransition() {
+            const newEra = ERAS[gameState.currentEra];
+            const overlay = document.createElement('div');
+            overlay.className = 'era-transition';
+            overlay.innerHTML = `
+                <div class="text-center">
+                    <h2 class="text-6xl font-bold mb-8 text-white">ÈRE ${newEra.name}</h2>
+                    <p class="text-2xl text-white">Ton peuple entre dans une nouvelle ère !</p>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            setTimeout(() => {
+                overlay.remove();
+                updateStats();
+            }, 3000);
+        }
+
+        // Update stats
+        function updateStats() {
+            const discoveredCount = gameState.elements.filter(e => e.discovered).length;
+            const currentEraData = ERAS[gameState.currentEra];
+            const progress = Math.min(100, (discoveredCount / currentEraData.threshold) * 100);
+
+            document.getElementById('currentEra').textContent = `ÈRE ${currentEraData.name}`;
+            document.getElementById('elementsCount').textContent = discoveredCount;
+            document.getElementById('combinationsCount').textContent = gameState.combinationsCount;
+            document.getElementById('progressPercent').textContent = `${Math.round(progress)}%`;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // Update history
+        function updateHistory() {
+            const historyList = document.getElementById('historyList');
+            if (gameState.history.length === 0) {
+                historyList.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">Aucune découverte pour le moment</p>';
+                return;
+            }
+
+            historyList.innerHTML = gameState.history.map(h => `
+                <div class="bg-white bg-opacity-5 rounded-lg p-3 text-sm">
+                    <span class="text-gray-400">${h.from[0]} + ${h.from[1]}</span>
+                    <span class="mx-2">→</span>
+                    <span class="font-bold text-yellow-400">${h.icon} ${h.to}</span>
+                </div>
+            `).join('');
+        }
+
+        // Reset selection
+        document.getElementById('resetBtn').onclick = () => {
+            gameState.selectedElements = [];
+            updateCombineZone();
+            renderElements();
+        };
+
+        // Combine button
+        document.getElementById('combineBtn').onclick = combineElements;
+
+        // Initialize
+        init();
     </script>
 </body>
 </html>
