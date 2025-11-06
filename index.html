@@ -415,74 +415,6 @@
             100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
         }
 
-        /* World Evolution Styles */
-        .world-container {
-            background: linear-gradient(180deg,
-                rgba(135, 206, 250, 0.3) 0%,
-                rgba(144, 238, 144, 0.2) 40%,
-                rgba(160, 82, 45, 0.3) 80%,
-                rgba(101, 67, 33, 0.4) 100%);
-            border-radius: 20px;
-            padding: 30px 20px;
-            min-height: 400px;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid rgba(255, 215, 0, 0.3);
-        }
-
-        .world-layer {
-            font-size: 2rem;
-            margin: 15px 0;
-            text-align: center;
-            animation: fadeInWorld 0.6s ease-out;
-            letter-spacing: 8px;
-        }
-
-        .sky-layer {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        .flying-layer {
-            font-size: 2rem;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .building-layer {
-            font-size: 2.8rem;
-            letter-spacing: 10px;
-        }
-
-        .nature-layer {
-            font-size: 1.8rem;
-        }
-
-        .people-layer {
-            font-size: 2.2rem;
-            animation: wiggle 2s ease-in-out infinite;
-        }
-
-        .ground-layer {
-            font-size: 2rem;
-            margin-top: 20px;
-        }
-
-        @keyframes fadeInWorld {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes wiggle {
-            0%, 100% { transform: translateX(0px); }
-            25% { transform: translateX(-2px); }
-            75% { transform: translateX(2px); }
-        }
-
         /* Tech Tree Styles */
         .tech-tree-node {
             background: rgba(255, 255, 255, 0.05);
@@ -628,14 +560,6 @@
                         Éléments Actifs
                         <span class="sparkle">✨</span>
                     </h2>
-                    <div class="flex gap-2">
-                        <button id="worldBtn" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white rounded-full transition-all font-semibold text-sm">
-                            🌍 Monde
-                        </button>
-                        <button id="libraryBtn" class="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-500 hover:from-cyan-500 hover:to-blue-400 text-white rounded-full transition-all font-semibold text-sm">
-                            🌳 Arbre Tech
-                        </button>
-                    </div>
                 </div>
                 <div id="elementsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <!-- Elements will be inserted here -->
@@ -710,12 +634,16 @@
 
         // Achievements definition
         const ACHIEVEMENTS = {
-            "first_combination": { name: "✨ Premier Pas", desc: "Réaliser votre première combinaison", check: (state) => state.combinationsCount >= 1 },
-            "laborantin": { name: "🧪 Laborantin", desc: "Réaliser 10 combinaisons", check: (state) => state.combinationsCount >= 10 },
-            "batisseur": { name: "🛠️ Bâtisseur", desc: "Réaliser 50 combinaisons", check: (state) => state.combinationsCount >= 50 },
-            "penseur": { name: "🧠 Penseur", desc: "Réaliser 100 combinaisons", check: (state) => state.combinationsCount >= 100 },
-            "architecte": { name: "🏛️ Architecte du Savoir", desc: "Réaliser 250 combinaisons", check: (state) => state.combinationsCount >= 250 },
-            "demiurge": { name: "🌌 Démiurge", desc: "Réaliser 500 combinaisons", check: (state) => state.combinationsCount >= 500 },
+            "first_combination": { name: "✨ Premier Pas", desc: "Réaliser votre première combinaison", check: (state) => state.combinationsCount >= 1, alwaysShow: true },
+            "laborantin": { name: "🧪 Laborantin", desc: "Réaliser 10 combinaisons", check: (state) => state.combinationsCount >= 10, alwaysShow: true },
+            "batisseur": { name: "🛠️ Bâtisseur", desc: "Réaliser 50 combinaisons", check: (state) => state.combinationsCount >= 50, alwaysShow: true },
+            "penseur": { name: "🧠 Penseur", desc: "Réaliser 100 combinaisons", check: (state) => state.combinationsCount >= 100, alwaysShow: true },
+            "architecte": { name: "🏛️ Architecte du Savoir", desc: "Réaliser 250 combinaisons", check: (state) => state.combinationsCount >= 250, alwaysShow: true },
+            "demiurge": { name: "🌌 Démiurge", desc: "Réaliser 500 combinaisons", check: (state) => state.combinationsCount >= 500, alwaysShow: true },
+            "streak_2": { name: "🔥 Combo x2", desc: "Atteindre un streak de 2", check: (state) => state.maxStreak >= 2, alwaysShow: true },
+            "streak_3": { name: "🔥🔥 Combo x3", desc: "Atteindre un streak de 3", check: (state) => state.maxStreak >= 3, alwaysShow: true },
+            "streak_5": { name: "🔥🔥🔥 Super Combo x5", desc: "Atteindre un streak de 5", check: (state) => state.maxStreak >= 5, alwaysShow: true },
+            "streak_10": { name: "🔥🔥🔥🔥 Fantastic x10", desc: "Atteindre un streak de 10", check: (state) => state.maxStreak >= 10, alwaysShow: true },
             "fire_master": { name: "🔥 Âge du Feu", desc: "Maîtriser le Feu", check: (state) => state.elements.find(e => e.name === "Feu" && e.discovered) },
             "language": { name: "🗣️ Don de la Parole", desc: "Développer le Langage", check: (state) => state.elements.find(e => e.name === "Langage" && e.discovered) },
             "agriculture": { name: "🌾 Révolution Néolithique", desc: "Découvrir l'Agriculture", check: (state) => state.elements.find(e => e.name === "Agriculture" && e.discovered) },
@@ -1121,125 +1049,6 @@
             setTimeout(() => notif.remove(), 3000);
         }
 
-        // Show World Evolution - Visual representation of civilization progress
-        function showWorldEvolution() {
-            const discoveredCount = gameState.elements.filter(e => e.discovered).length;
-            const totalCount = Object.keys(COMBINATIONS).length + 2; // +2 for starting elements
-
-            // Build the world scene based on discoveries
-            let worldScene = '';
-            let worldTitle = '';
-            let worldDescription = '';
-
-            // Layer 1: Sky & Background (always visible)
-            worldScene += '<div class="world-layer sky-layer">';
-            if (discoveredCount >= 100) {
-                worldScene += '🌌 ✨ 🪐 ⭐ 🌟 💫 ✨ 🌌';
-            } else if (discoveredCount >= 60) {
-                worldScene += '☁️ ☀️ ☁️ 🌤️ ☁️';
-            } else {
-                worldScene += '☁️ ☁️ ☁️';
-            }
-            worldScene += '</div>';
-
-            // Layer 2: Flying/Space elements
-            if (discoveredCount >= 120) {
-                worldScene += '<div class="world-layer flying-layer">🚀 🛸 🛰️ 🚁</div>';
-            } else if (discoveredCount >= 80) {
-                worldScene += '<div class="world-layer flying-layer">✈️ 🎈</div>';
-            }
-
-            // Layer 3: Buildings & Structures
-            worldScene += '<div class="world-layer building-layer">';
-            if (discoveredCount >= 150) {
-                worldScene += '🏙️ 🌃 🏢 🏗️ 🏭 🌉 🏰 🗼';
-                worldTitle = 'Civilisation Ultra-Avancée';
-                worldDescription = 'Votre civilisation a atteint des sommets inimaginables ! Mégalopoles, conquête spatiale, et technologies futuristes.';
-            } else if (discoveredCount >= 100) {
-                worldScene += '🏭 🏢 🏙️ ⚙️ 🏗️ 🌉';
-                worldTitle = 'Ère Industrielle';
-                worldDescription = 'L\'industrialisation bat son plein ! Usines, gratte-ciels, et technologies modernes transforment le monde.';
-            } else if (discoveredCount >= 60) {
-                worldScene += '🏛️ 🏰 🗿 ⛪ 🕌';
-                worldTitle = 'Ère Antique';
-                worldDescription = 'Votre civilisation prospère avec des monuments majestueux, des temples et des cités fortifiées.';
-            } else if (discoveredCount >= 30) {
-                worldScene += '🏘️ 🏡 ⛺ 🏕️';
-                worldTitle = 'Ère Agricole';
-                worldDescription = 'Les premiers villages se forment. L\'agriculture permet une vie sédentaire.';
-            } else if (discoveredCount >= 10) {
-                worldScene += '⛺ 🏕️';
-                worldTitle = 'Ère Tribale';
-                worldDescription = 'Des campements primitifs commencent à se former.';
-            } else {
-                worldScene += '🏞️';
-                worldTitle = 'Aube de l\'Humanité';
-                worldDescription = 'Le commencement... La nature sauvage et les premiers pas de l\'humanité.';
-            }
-            worldScene += '</div>';
-
-            // Layer 4: Nature & Agriculture
-            worldScene += '<div class="world-layer nature-layer">';
-            if (discoveredCount >= 30) {
-                worldScene += '🌾 🌻 🌳 🌲 🌴 🌵 🌿 🍃';
-            } else if (discoveredCount >= 15) {
-                worldScene += '🌳 🌲 🌿 🍃';
-            } else {
-                worldScene += '🌳 🌲';
-            }
-            worldScene += '</div>';
-
-            // Layer 5: People & Activities
-            worldScene += '<div class="world-layer people-layer">';
-            if (discoveredCount >= 100) {
-                worldScene += '👨‍💼 👩‍🔬 👨‍🚀 👩‍💻 🤖 👾';
-            } else if (discoveredCount >= 60) {
-                worldScene += '👨‍🎨 👩‍🏫 ⚔️ 📜 🎭';
-            } else if (discoveredCount >= 30) {
-                worldScene += '👨‍🌾 👩‍🌾 🐄 🐑 🐓';
-            } else if (discoveredCount >= 10) {
-                worldScene += '👤 👤 🔥 🏹';
-            } else {
-                worldScene += '👤 🔥';
-            }
-            worldScene += '</div>';
-
-            // Layer 6: Ground & Resources
-            worldScene += '<div class="world-layer ground-layer">';
-            if (discoveredCount >= 60) {
-                worldScene += '🛣️ 🌉 ⛏️ 💎 ⚙️';
-            } else if (discoveredCount >= 30) {
-                worldScene += '🪨 🗿 ⛏️';
-            } else {
-                worldScene += '🏞️ 🪨';
-            }
-            worldScene += '</div>';
-
-            const modal = document.createElement('div');
-            modal.className = 'discovery-modal';
-            modal.innerHTML = `
-                <div class="library-modal-content">
-                    <h2 class="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">${worldTitle}</h2>
-                    <p class="text-sm text-gray-400 mb-4">${discoveredCount} / ${totalCount} éléments découverts</p>
-
-                    <div class="world-container">
-                        ${worldScene}
-                    </div>
-
-                    <p class="text-base text-gray-300 mt-4 px-4">${worldDescription}</p>
-
-                    <div class="mt-4 text-xs text-gray-500">
-                        Chaque découverte enrichit votre monde ! Continue d'explorer pour voir ta civilisation évoluer.
-                    </div>
-
-                    <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine mt-6">
-                        Fermer
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-
         // Show achievements modal
         function showAchievementsModal() {
             const unlockedCount = gameState.achievements.length;
@@ -1247,10 +1056,11 @@
 
             const achievementsList = Object.entries(ACHIEVEMENTS).map(([key, ach]) => {
                 const unlocked = gameState.achievements.includes(key);
+                const showDetails = unlocked || ach.alwaysShow;
                 return `
                     <div class="bg-white bg-opacity-${unlocked ? '10' : '5'} rounded-lg p-4 mb-2 ${unlocked ? '' : 'opacity-50'}">
-                        <div class="font-bold ${unlocked ? 'text-yellow-400' : 'text-gray-500'}">${unlocked ? ach.name : '🔒 ???'}</div>
-                        <div class="text-sm ${unlocked ? 'text-gray-300' : 'text-gray-600'}">${unlocked ? ach.desc : 'Succès verrouillé'}</div>
+                        <div class="font-bold ${unlocked ? 'text-yellow-400' : 'text-gray-500'}">${showDetails ? ach.name : '🔒 ???'}</div>
+                        <div class="text-sm ${unlocked ? 'text-gray-300' : 'text-gray-600'}">${showDetails ? ach.desc : 'Succès verrouillé'}</div>
                     </div>
                 `;
             }).join('');
@@ -1689,12 +1499,6 @@
 
         // Achievements button
         document.getElementById('achievementsBtn').onclick = showAchievementsModal;
-
-        // World button
-        document.getElementById('worldBtn').onclick = showWorldEvolution;
-
-        // Library button (now shows tech tree)
-        document.getElementById('libraryBtn').onclick = showTechTree;
 
         // Debug era button
         document.getElementById('debugEraBtn').onclick = debugJumpToNextEra;
