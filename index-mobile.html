@@ -166,6 +166,7 @@
             font-size: 3rem;
             margin-bottom: 8px;
             display: block;
+            text-align: center;
         }
 
         .discovery-modal {
@@ -548,7 +549,7 @@
             }
         }
 
-        function combineElements() {
+        function combineElements(skipModals = false) {
             // Disable button temporarily to prevent double-tap
             document.getElementById('combineBtn').disabled = true;
 
@@ -576,14 +577,20 @@
                     gameState.elements.push(newElement);
                     gameState.combinationsCount++;
 
-                    showDiscoveryModal(newElement, combination.narration);
+                    if (!skipModals) {
+                        showDiscoveryModal(newElement, combination.narration);
+                    }
                     checkAchievements();
                     checkEraProgression();
                 } else {
-                    showAlreadyDiscoveredModal(combination.result);
+                    if (!skipModals) {
+                        showAlreadyDiscoveredModal(combination.result);
+                    }
                 }
             } else {
-                showNoResultModal();
+                if (!skipModals) {
+                    showNoResultModal();
+                }
             }
 
             gameState.selectedElements = [];
@@ -818,7 +825,7 @@
 
             // Auto-combine after a short delay for visual feedback
             setTimeout(() => {
-                combineElements();
+                combineElements(true);
             }, 500);
         }
 
