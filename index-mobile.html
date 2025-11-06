@@ -25,15 +25,76 @@
             color: #e0e0e0;
             overflow-x: hidden;
             touch-action: manipulation;
-            transition: background 1s ease;
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Thèmes par ère */
-        body.era-1 { background: linear-gradient(135deg, #4a2c2a 0%, #2c1810 50%, #1a0f0a 100%); }
-        body.era-2 { background: linear-gradient(135deg, #2d4a2c 0%, #1a3518 50%, #0f1f0e 100%); }
-        body.era-3 { background: linear-gradient(135deg, #3d3d5c 0%, #2a2a45 50%, #1a1a2e 100%); }
-        body.era-4 { background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #0d0d0d 100%); }
-        body.era-5 { background: linear-gradient(135deg, #0a0a2e 0%, #1a1a3e 50%, #2a2a5e 100%); }
+        /* ÈRE 1 : TRIBALE - Feu et Terre primitive */
+        body.era-1 {
+            background:
+                radial-gradient(ellipse at top left, rgba(255, 100, 50, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(200, 80, 20, 0.2) 0%, transparent 50%),
+                linear-gradient(135deg, #2a1810 0%, #1a0f08 30%, #0f0805 60%, #1a0f08 100%);
+        }
+
+        /* ÈRE 2 : AGRICOLE - Nature verdoyante */
+        body.era-2 {
+            background:
+                radial-gradient(ellipse at top, rgba(120, 200, 80, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at bottom, rgba(80, 140, 60, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #1a3a1a 0%, #0f2a0f 30%, #081808 60%, #0f2a0f 100%);
+        }
+
+        /* ÈRE 3 : ANTIQUE - Marbre et or */
+        body.era-3 {
+            background:
+                radial-gradient(circle at top right, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at bottom left, rgba(160, 130, 200, 0.15) 0%, transparent 50%),
+                linear-gradient(135deg, #2a2a38 0%, #1a1a28 30%, #12121c 60%, #1a1a28 100%);
+        }
+
+        /* ÈRE 4 : INDUSTRIELLE - Acier et fumée */
+        body.era-4 {
+            background:
+                radial-gradient(ellipse at top, rgba(255, 140, 60, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, rgba(120, 120, 130, 0.15) 0%, transparent 60%),
+                linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 30%, #050505 60%, #0d0d0d 100%);
+        }
+
+        /* ÈRE 5 : SPATIALE - Cosmos néon */
+        body.era-5 {
+            background:
+                radial-gradient(ellipse at top left, rgba(0, 200, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(150, 50, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at center, rgba(0, 150, 255, 0.05) 0%, transparent 40%),
+                linear-gradient(135deg, #0a0a2e 0%, #050515 30%, #02020a 60%, #0a0a2e 100%);
+        }
+
+        /* Effets de carte par ère */
+        body.era-1 .element-card {
+            background: linear-gradient(135deg, rgba(255, 150, 100, 0.08) 0%, rgba(200, 100, 50, 0.04) 100%);
+            border-color: rgba(255, 150, 100, 0.2);
+        }
+
+        body.era-2 .element-card {
+            background: linear-gradient(135deg, rgba(120, 200, 80, 0.08) 0%, rgba(80, 160, 60, 0.04) 100%);
+            border-color: rgba(120, 200, 80, 0.2);
+        }
+
+        body.era-3 .element-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(160, 130, 200, 0.06) 100%);
+            border-color: rgba(200, 170, 120, 0.25);
+        }
+
+        body.era-4 .element-card {
+            background: linear-gradient(135deg, rgba(200, 200, 210, 0.08) 0%, rgba(150, 150, 160, 0.04) 100%);
+            border-color: rgba(180, 180, 200, 0.2);
+        }
+
+        body.era-5 .element-card {
+            background: linear-gradient(135deg, rgba(0, 200, 255, 0.1) 0%, rgba(150, 50, 255, 0.06) 100%);
+            border-color: rgba(0, 180, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 150, 255, 0.1);
+        }
 
         h1, h2, h3 {
             font-family: 'Cinzel', serif;
@@ -201,6 +262,19 @@
             border-radius: 20px;
             padding: 30px 20px;
             max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+            animation: scaleIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        .library-modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 2px solid #ffd700;
+            border-radius: 20px;
+            padding: 30px 15px;
+            width: 95vw;
             max-height: 90vh;
             overflow-y: auto;
             text-align: center;
@@ -506,27 +580,23 @@
 
         // Check if an element is still useful for combinations
         function isElementUseful(elementName) {
-            const discoveredNames = gameState.elements.filter(e => e.discovered).map(e => e.name);
-
-            // Check if this element can be used in any combination that hasn't been discovered yet
+            // An element is only useless if ALL combinations that use it have already been discovered
             for (const key in COMBINATIONS) {
                 const [elem1, elem2] = key.split('+');
                 const combo = COMBINATIONS[key];
 
                 // If this element is part of the combination
                 if (elem1 === elementName || elem2 === elementName) {
-                    // Check if the other element is discovered
-                    const otherElem = elem1 === elementName ? elem2 : elem1;
-                    if (discoveredNames.includes(otherElem)) {
-                        // Check if the result hasn't been discovered yet
-                        const alreadyDiscovered = gameState.elements.find(e => e.name === combo.result);
-                        if (!alreadyDiscovered) {
-                            return true; // Element is still useful
-                        }
+                    // Check if the result hasn't been discovered yet
+                    const resultDiscovered = gameState.elements.find(e => e.name === combo.result && e.discovered);
+                    if (!resultDiscovered) {
+                        // This element is still needed for a future combination
+                        return true;
                     }
                 }
             }
-            return false; // Element is not useful anymore
+            // All combinations using this element have been discovered
+            return false;
         }
 
         function renderElements() {
@@ -688,11 +758,11 @@
             const modal = document.createElement('div');
             modal.className = 'discovery-modal';
             modal.innerHTML = `
-                <div class="discovery-content">
+                <div class="library-modal-content">
                     <div class="text-5xl mb-4">📚</div>
-                    <h2 class="text-2xl font-bold mb-4 text-yellow-400">Bibliothèque</h2>
-                    <p class="text-base mb-4">${discoveredElements.length} éléments découverts</p>
-                    <div class="max-h-96 overflow-y-auto">
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400">Bibliothèque de Découvertes</h2>
+                    <p class="text-base mb-4">${discoveredElements.length} éléments découverts au total</p>
+                    <div class="grid grid-cols-2 gap-2 text-left max-h-[65vh] overflow-y-auto px-1">
                         ${elementsList}
                     </div>
                     <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine mt-4">
