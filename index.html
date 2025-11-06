@@ -862,6 +862,19 @@
             const combination = COMBINATIONS[key1] || COMBINATIONS[key2];
 
             if (combination) {
+                // Check if the combination's section is accessible
+                if (combination.section && !isSectionAccessible(combination.section)) {
+                    const sectionData = SECTIONS[combination.section];
+                    const sectionName = sectionData ? `${combination.section} : ${sectionData.name}` : combination.section;
+                    if (!skipModals) {
+                        showLockedSectionModal(sectionName, sectionData.requiredDiscoveries);
+                    }
+                    gameState.selectedElements = [];
+                    updateCombineZone();
+                    renderElements();
+                    return;
+                }
+
                 ensureElementExists(elem1.name);
                 ensureElementExists(elem2.name);
 
@@ -1258,6 +1271,27 @@
             document.body.appendChild(modal);
         }
 
+        function showLockedSectionModal(sectionName, requiredDiscoveries) {
+            const currentDiscoveries = gameState.elements.filter(e => e.discovered).length;
+            const remaining = requiredDiscoveries - currentDiscoveries;
+
+            const modal = document.createElement('div');
+            modal.className = 'discovery-modal';
+            modal.innerHTML = `
+                <div class="discovery-content">
+                    <div class="text-6xl mb-4">🔒</div>
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400">Section verrouillée</h2>
+                    <p class="text-lg mb-4">Cette combinaison appartient à la section :</p>
+                    <p class="text-xl font-bold mb-4 text-cyan-400">${sectionName}</p>
+                    <p class="text-sm mb-6">Encore ${remaining} découvertes nécessaires pour débloquer cette section.</p>
+                    <button onclick="this.closest('.discovery-modal').remove()" class="bg-gray-700 hover:bg-gray-600 text-white py-3 px-8 rounded-full">
+                        Compris
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
         // Show hint
         function showHint() {
             const discoveredNames = gameState.elements.filter(e => e.discovered).map(e => e.name);
@@ -1476,6 +1510,22 @@
                 overlay.remove();
                 updateStats();
             }, 3000);
+        }
+
+        // Check if a section is accessible to the player
+        function isSectionAccessible(requiredSection) {
+            if (!requiredSection) return true; // No section requirement = always accessible
+
+            const currentSection = gameState.currentSection;
+
+            // Parse section IDs (e.g., "2.3" => [2, 3])
+            const [currentEra, currentSect] = currentSection.split('.').map(Number);
+            const [requiredEra, requiredSect] = requiredSection.split('.').map(Number);
+
+            // Compare eras first, then sections
+            if (currentEra > requiredEra) return true;
+            if (currentEra < requiredEra) return false;
+            return currentSect >= requiredSect;
         }
 
         // Get current unlocked section based on discoveries
