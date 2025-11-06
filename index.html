@@ -807,11 +807,18 @@
 
         // Select element
         function selectElement(element) {
-            if (gameState.selectedElements.includes(element)) {
-                gameState.selectedElements = gameState.selectedElements.filter(e => e !== element);
+            // Count how many times this element is already selected
+            const count = gameState.selectedElements.filter(e => e === element).length;
+
+            if (count === 2) {
+                // Element selected twice, clicking again removes one instance
+                const index = gameState.selectedElements.indexOf(element);
+                gameState.selectedElements.splice(index, 1);
             } else if (gameState.selectedElements.length < 2) {
+                // Less than 2 slots filled, add this element (even if it's the same)
                 gameState.selectedElements.push(element);
             } else {
+                // 2 slots already filled with different elements, replace all
                 gameState.selectedElements = [element];
             }
 
@@ -864,6 +871,10 @@
                         new: true
                     };
                     gameState.elements.push(newElement);
+
+                    // Increment combinations count only on successful NEW discovery
+                    gameState.combinationsCount++;
+
                     showDiscoveryModal(newElement, combination.narration);
 
                     // Add to history
@@ -886,7 +897,6 @@
                 showNoResultModal();
             }
 
-            gameState.combinationsCount++;
             gameState.selectedElements = [];
             updateCombineZone();
             renderElements();
