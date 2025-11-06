@@ -79,18 +79,20 @@
             border-radius: 8px;
             padding: 16px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
 
         .element-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
 
         .element-card.selected {
-            border-color: rgba(255,255,255,0.4);
-            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,215,0,0.6);
+            background: rgba(255,215,0,0.08);
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
         }
 
         .element-card.new-discovery {
@@ -114,13 +116,14 @@
         }
 
         .narration-box {
-            background: rgba(0,0,0,0.3);
-            border-left: 2px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.5);
+            border-left: 4px solid #ffd700;
             padding: 20px;
-            border-radius: 4px;
+            border-radius: 8px;
             margin: 16px 0;
             font-style: italic;
             animation: slideIn 0.5s ease-out;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         @keyframes slideIn {
@@ -129,21 +132,28 @@
         }
 
         .combine-zone {
-            background: rgba(255,255,255,0.02);
-            border: 1px dashed rgba(255,255,255,0.15);
-            border-radius: 8px;
+            background: rgba(255,215,0,0.05);
+            border: 2px dashed rgba(255,215,0,0.3);
+            border-radius: 12px;
             padding: 30px;
             min-height: 180px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .combine-zone.ready {
-            border-color: rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,215,0,0.6);
+            background: rgba(255,215,0,0.12);
+            box-shadow: 0 0 30px rgba(255,215,0,0.2);
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.2); }
+            50% { box-shadow: 0 0 40px rgba(255,215,0,0.4); }
         }
 
         .stats-panel {
@@ -154,40 +164,61 @@
         }
 
         .btn-combine {
-            background: rgba(255,255,255,0.08);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.15);
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
         }
 
         .btn-combine:hover {
-            background: rgba(255,255,255,0.12);
-            border-color: rgba(255,255,255,0.25);
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(102,126,234,0.5);
         }
 
         .btn-combine:disabled {
-            opacity: 0.3;
+            opacity: 0.5;
             cursor: not-allowed;
+            transform: scale(1);
         }
 
         .progress-bar {
-            height: 2px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 2px;
+            height: 8px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
             overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .progress-fill {
             height: 100%;
-            background: rgba(255,255,255,0.3);
-            transition: width 0.5s ease;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #ffd700 100%);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px rgba(255,215,0,0.4);
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .element-icon {
@@ -214,33 +245,35 @@
         }
 
         .discovery-content {
-            background: rgba(10,10,10,0.95);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(22,33,62,0.98) 100%);
+            border: 2px solid rgba(255,215,0,0.5);
+            border-radius: 16px;
             padding: 40px;
             max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
             text-align: center;
-            animation: scaleIn 0.3s ease-out;
+            animation: scaleIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.1);
         }
 
         .library-modal-content {
-            background: rgba(10,10,10,0.95);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(22,33,62,0.98) 100%);
+            border: 2px solid rgba(255,215,0,0.5);
+            border-radius: 16px;
             padding: 40px;
             max-width: 1400px;
             width: 95vw;
             max-height: 90vh;
             overflow-y: auto;
             text-align: center;
-            animation: scaleIn 0.3s ease-out;
+            animation: scaleIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(255,215,0,0.1);
         }
 
         @keyframes scaleIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from { transform: scale(0.8) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         .sparkle {
@@ -453,14 +486,14 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(255,255,255,0.08);
-            color: #e0e0e0;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #1a1a2e;
             padding: 16px 24px;
-            border-radius: 4px;
-            border: 1px solid rgba(255,255,255,0.15);
-            animation: slideInRight 0.3s ease-out, slideOutRight 0.3s ease-in 2.5s forwards;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(255,215,0,0.5);
+            animation: slideInRight 0.5s ease-out, slideOutRight 0.5s ease-in 2.5s forwards;
             z-index: 3000;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         @keyframes slideInRight {
@@ -486,30 +519,39 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.2);
         }
 
         .era-name {
             font-family: 'Cinzel', serif;
-            font-size: 1.2rem;
-            font-weight: 600;
-            letter-spacing: 3px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            transition: color 1.2s ease;
+            transition: all 1.2s ease;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            filter: drop-shadow(0 0 8px currentColor);
         }
 
         .section-indicator {
             font-family: 'Inter', sans-serif;
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.4);
-            font-weight: 300;
-            letter-spacing: 1px;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            font-weight: 400;
+            letter-spacing: 2px;
+            background: rgba(255,255,255,0.05);
+            padding: 2px 8px;
+            border-radius: 4px;
         }
 
         .section-name {
             font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.6);
-            font-weight: 400;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            font-weight: 500;
+            letter-spacing: 1px;
         }
 
         /* Titre principal épuré */
@@ -608,27 +650,27 @@
                     Créer !
                 </button>
 
-                <button id="resetBtn" class="w-full mt-3 bg-white bg-opacity-5 hover:bg-opacity-10 text-white py-2 px-4 rounded border border-white border-opacity-10 hover:border-opacity-20 transition-all text-sm">
+                <button id="resetBtn" class="w-full mt-3 bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full transition-all text-sm font-medium shadow-md hover:shadow-lg">
                     Réinitialiser la sélection
                 </button>
 
-                <button id="hintBtn" class="w-full mt-3 bg-white bg-opacity-5 hover:bg-opacity-10 text-white py-2 px-4 rounded border border-white border-opacity-10 hover:border-opacity-20 transition-all text-sm">
+                <button id="hintBtn" class="w-full mt-3 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white py-2 px-4 rounded-full transition-all text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105">
                     💡 Indice
                 </button>
 
-                <button id="autoBtn" class="w-full mt-3 bg-white bg-opacity-5 hover:bg-opacity-10 text-white py-2 px-4 rounded border border-white border-opacity-10 hover:border-opacity-20 transition-all text-sm">
+                <button id="autoBtn" class="w-full mt-3 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white py-2 px-4 rounded-full transition-all text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105">
                     ⚡ Auto
                 </button>
 
-                <button id="techTreeBtn" class="w-full mt-3 bg-white bg-opacity-5 hover:bg-opacity-10 text-white py-2 px-4 rounded border border-white border-opacity-10 hover:border-opacity-20 transition-all text-sm">
+                <button id="techTreeBtn" class="w-full mt-3 bg-gradient-to-r from-cyan-600 to-blue-500 hover:from-cyan-500 hover:to-blue-400 text-white py-2 px-4 rounded-full transition-all text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105">
                     🌳 Arbre Tech
                 </button>
 
-                <button id="achievementsBtn" class="w-full mt-3 bg-white bg-opacity-5 hover:bg-opacity-10 text-white py-2 px-4 rounded border border-white border-opacity-10 hover:border-opacity-20 transition-all text-sm">
+                <button id="achievementsBtn" class="w-full mt-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white py-2 px-4 rounded-full transition-all text-sm font-semibold shadow-md hover:shadow-lg hover:scale-105">
                     🏆 Succès
                 </button>
 
-                <button id="debugEraBtn" class="w-full mt-3 bg-white bg-opacity-5 hover:bg-opacity-10 text-white py-2 px-4 rounded border border-white border-opacity-10 hover:border-opacity-20 transition-all text-xs opacity-30 hover:opacity-60">
+                <button id="debugEraBtn" class="w-full mt-3 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white py-2 px-4 rounded-full transition-all text-xs font-semibold opacity-40 hover:opacity-100 shadow-md hover:shadow-lg">
                     🚀 DEBUG: Ère Suivante
                 </button>
 
@@ -711,6 +753,15 @@
 
         // COMBINATIONS chargées depuis combinations.js
 
+        // Calculate total possible elements for progress bar
+        let TOTAL_ELEMENTS = 0;
+        const allPossibleElements = new Set();
+        allPossibleElements.add("Humain");
+        allPossibleElements.add("Terre");
+        for (const key in COMBINATIONS) {
+            allPossibleElements.add(COMBINATIONS[key].result);
+        }
+        TOTAL_ELEMENTS = allPossibleElements.size;
 
         // Game State
         let gameState = {
@@ -1243,9 +1294,9 @@
             modal.className = 'discovery-modal';
             modal.innerHTML = `
                 <div class="discovery-content">
-                    <div class="text-7xl mb-6">${element.icon}</div>
-                    <h2 class="text-2xl font-bold mb-2" style="color: rgba(255,255,255,0.9);">Nouvelle découverte</h2>
-                    <h3 class="text-xl mb-6" style="color: rgba(255,255,255,0.7);">${element.name}</h3>
+                    <div class="text-7xl mb-6 sparkle">${element.icon}</div>
+                    <h2 class="text-3xl font-bold mb-2 text-yellow-400">✨ Nouvelle découverte !</h2>
+                    <h3 class="text-2xl font-bold mb-6 text-white">${element.name}</h3>
                     <div class="narration-box text-left">
                         ${narration}
                     </div>
@@ -1598,7 +1649,7 @@
         function updateStats() {
             const discoveredCount = gameState.elements.filter(e => e.discovered).length;
             const currentEraData = ERAS[gameState.currentEra];
-            const progress = Math.min(100, (discoveredCount / currentEraData.threshold) * 100);
+            const progress = Math.min(100, (discoveredCount / TOTAL_ELEMENTS) * 100);
             const sectionData = SECTIONS[gameState.currentSection];
 
             document.getElementById('currentEra').textContent = currentEraData.name;
@@ -1606,7 +1657,7 @@
             document.getElementById('currentSection').textContent = sectionData.name;
             document.getElementById('elementsCount').textContent = discoveredCount;
             document.getElementById('combinationsCount').textContent = gameState.combinationsCount;
-            document.getElementById('progressPercent').textContent = `${Math.round(progress)}%`;
+            document.getElementById('progressPercent').textContent = `${discoveredCount}/${TOTAL_ELEMENTS}`;
             document.getElementById('progressBar').style.width = `${progress}%`;
             document.getElementById('achievementsCount').textContent = gameState.achievements.length;
         }
@@ -1620,10 +1671,10 @@
             }
 
             historyList.innerHTML = gameState.history.map(h => `
-                <div class="bg-white bg-opacity-5 rounded p-3 text-sm border border-white border-opacity-5">
-                    <span class="text-gray-500">${h.from[0]} + ${h.from[1]}</span>
-                    <span class="mx-2" style="color: rgba(255,255,255,0.3);">→</span>
-                    <span class="font-medium text-gray-300">${h.icon} ${h.to}</span>
+                <div class="bg-white bg-opacity-10 rounded-lg p-3 text-sm border border-yellow-500 border-opacity-20 hover:border-opacity-40 transition-all">
+                    <span class="text-gray-400">${h.from[0]} + ${h.from[1]}</span>
+                    <span class="mx-2 text-yellow-500">→</span>
+                    <span class="font-bold text-yellow-400">${h.icon} ${h.to}</span>
                 </div>
             `).join('');
         }
