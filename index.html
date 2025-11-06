@@ -288,6 +288,10 @@
                     Réinitialiser la sélection
                 </button>
 
+                <button id="hintBtn" class="w-full mt-3 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white py-2 px-4 rounded-full transition-all font-semibold">
+                    💡 Indice
+                </button>
+
                 <!-- History -->
                 <div class="mt-8">
                     <h3 class="text-lg font-bold mb-4">📜 Dernières découvertes</h3>
@@ -606,6 +610,70 @@
                 </div>
             `).join('');
         }
+
+        // Show hint
+        function showHint() {
+            const discoveredNames = gameState.elements.filter(e => e.discovered).map(e => e.name);
+            const possibleHints = [];
+
+            // Find all possible combinations with current elements
+            for (const key in COMBINATIONS) {
+                const [elem1, elem2] = key.split('+');
+                const combo = COMBINATIONS[key];
+
+                // Check if both elements are discovered and result is not
+                if (discoveredNames.includes(elem1) && discoveredNames.includes(elem2)) {
+                    const alreadyDiscovered = gameState.elements.find(e => e.name === combo.result);
+                    if (!alreadyDiscovered) {
+                        possibleHints.push({ elem1, elem2, result: combo.result, icon: combo.icon });
+                    }
+                }
+            }
+
+            if (possibleHints.length === 0) {
+                // No hints available
+                const modal = document.createElement('div');
+                modal.className = 'discovery-modal';
+                modal.innerHTML = `
+                    <div class="discovery-content">
+                        <div class="text-6xl mb-4">🤔</div>
+                        <h2 class="text-2xl font-bold mb-4 text-yellow-400">Aucun indice disponible</h2>
+                        <p class="text-lg mb-6">Tu as découvert toutes les combinaisons possibles avec tes éléments actuels !</p>
+                        <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine">
+                            D'accord
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                return;
+            }
+
+            // Pick random hint
+            const hint = possibleHints[Math.floor(Math.random() * possibleHints.length)];
+
+            const modal = document.createElement('div');
+            modal.className = 'discovery-modal';
+            modal.innerHTML = `
+                <div class="discovery-content">
+                    <div class="text-6xl mb-4">💡</div>
+                    <h2 class="text-2xl font-bold mb-4 text-yellow-400">Indice</h2>
+                    <p class="text-lg mb-4">Essaye de combiner :</p>
+                    <div class="flex justify-center items-center gap-4 my-6 text-4xl">
+                        <span class="bg-white bg-opacity-10 rounded-lg px-6 py-3">${gameState.elements.find(e => e.name === hint.elem1)?.icon}</span>
+                        <span class="text-2xl">+</span>
+                        <span class="bg-white bg-opacity-10 rounded-lg px-6 py-3">${gameState.elements.find(e => e.name === hint.elem2)?.icon}</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-6">${hint.elem1} + ${hint.elem2}</p>
+                    <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine">
+                        Compris !
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Hint button
+        document.getElementById('hintBtn').onclick = showHint;
 
         // Reset selection
         document.getElementById('resetBtn').onclick = () => {
