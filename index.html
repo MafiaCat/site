@@ -201,24 +201,8 @@
             height: 100%;
             background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #ffd700 100%);
             transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 15px rgba(255,215,0,0.4);
-            position: relative;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+            border-radius: 10px;
         }
 
         .element-icon {
@@ -494,6 +478,56 @@
             animation: slideInRight 0.5s ease-out, slideOutRight 0.5s ease-in 2.5s forwards;
             z-index: 3000;
             font-weight: 600;
+        }
+
+        .discovery-notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.95) 0%, rgba(118,75,162,0.95) 100%);
+            color: white;
+            padding: 20px 28px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(102,126,234,0.6), 0 0 30px rgba(255,215,0,0.3);
+            animation: slideInRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), slideOutRight 0.4s ease-in 3.5s forwards;
+            z-index: 2900;
+            border: 2px solid rgba(255,215,0,0.4);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 280px;
+        }
+
+        .discovery-notification .icon {
+            font-size: 3rem;
+            filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));
+            animation: bounce 0.6s ease-out;
+        }
+
+        .discovery-notification .content {
+            flex: 1;
+        }
+
+        .discovery-notification .title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .discovery-notification .name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.2) rotate(-5deg); }
+            50% { transform: scale(0.95) rotate(5deg); }
+            75% { transform: scale(1.1) rotate(-3deg); }
         }
 
         @keyframes slideInRight {
@@ -986,6 +1020,7 @@
                     }
 
                     if (!skipModals) {
+                        showDiscoveryNotification(newElement);
                         showDiscoveryModal(newElement, combination.narration);
                     }
 
@@ -1286,6 +1321,21 @@
                 </div>
             `;
             document.body.appendChild(modal);
+        }
+
+        // Show discovery notification (small, top-right)
+        function showDiscoveryNotification(element) {
+            const notif = document.createElement('div');
+            notif.className = 'discovery-notification';
+            notif.innerHTML = `
+                <div class="icon">${element.icon}</div>
+                <div class="content">
+                    <div class="title">✨ Nouvelle découverte</div>
+                    <div class="name">${element.name}</div>
+                </div>
+            `;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 4000);
         }
 
         // Show discovery modal
