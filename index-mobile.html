@@ -296,6 +296,173 @@
             50% { opacity: 0.3; }
         }
 
+        /* Streak System */
+        .streak-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            transition: all 0.3s ease;
+        }
+
+        #streakIcon {
+            display: inline-block;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .streak-low #streakIcon {
+            font-size: 0.9em;
+            filter: grayscale(50%);
+        }
+
+        .streak-medium #streakIcon {
+            font-size: 1.2em;
+            animation: fireFlicker 0.5s ease-in-out infinite;
+        }
+
+        .streak-high #streakIcon {
+            font-size: 1.4em;
+            animation: fireBurn 0.4s ease-in-out infinite;
+        }
+
+        .streak-ultra #streakIcon {
+            font-size: 1.7em;
+            animation: fireExplode 0.3s ease-in-out infinite;
+        }
+
+        @keyframes fireFlicker {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.1) translateY(-2px); }
+        }
+
+        @keyframes fireBurn {
+            0%, 100% { transform: scale(1) rotate(-3deg); }
+            50% { transform: scale(1.15) rotate(3deg); }
+        }
+
+        @keyframes fireExplode {
+            0%, 100% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+            50% { transform: scale(1.2) rotate(10deg); filter: hue-rotate(30deg); }
+        }
+
+        /* Pulse Animation */
+        .pulse-on-change {
+            animation: none;
+        }
+
+        .pulse-on-change.pulse {
+            animation: pulseScale 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes pulseScale {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Shake Animation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        /* Confetti Particles */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: confettiFall 2s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Glow Effect */
+        .glow-effect {
+            animation: glowPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6); }
+        }
+
+        /* Streak Multiplier Badge */
+        .streak-multiplier {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            z-index: 9999;
+            pointer-events: none;
+            animation: multiplierPop 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes multiplierPop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            30% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+        }
+
+        /* Tech Tree Styles */
+        .tech-tree-node {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tech-tree-node.discovered {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .tech-tree-node.undiscovered {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(100, 100, 100, 0.3);
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
+
+        .tech-tree-node:active {
+            transform: scale(1.05);
+            border-color: #ffd700;
+        }
+
+        .tech-tree-icon {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+
+        .tech-tree-name {
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
         .era-transition {
             position: fixed;
             inset: 0;
@@ -399,17 +566,30 @@
 
         <!-- Stats Panel -->
         <div class="stats-panel mb-4">
-            <div class="grid grid-cols-3 gap-2 mb-3">
-                <div class="text-center">
+            <div class="grid grid-cols-4 gap-2 mb-3">
+                <div class="text-center col-span-2">
                     <div class="era-badge inline-block mb-1" id="currentEra">TRIBALE</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-2xl font-bold text-yellow-400" id="elementsCount">2</div>
+                    <div class="text-2xl font-bold text-yellow-400 pulse-on-change" id="elementsCount">2</div>
                     <div class="text-xs text-gray-400 mt-1">Éléments</div>
                 </div>
                 <div class="text-center">
                     <div class="text-2xl font-bold text-green-400" id="achievementsCount">0</div>
-                    <div class="text-xs text-gray-400 mt-1">🏆 Succès</div>
+                    <div class="text-xs text-gray-400 mt-1">🏆</div>
+                </div>
+            </div>
+            <div class="flex justify-between items-center mb-3">
+                <div class="text-center flex-1">
+                    <div class="text-2xl font-bold streak-display" id="streakCount">
+                        <span id="streakIcon">🔥</span>
+                        <span id="streakNumber">0</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">Série</div>
+                </div>
+                <div class="text-center flex-1">
+                    <div class="text-2xl font-bold text-purple-400 pulse-on-change" id="combinationsCount">0</div>
+                    <div class="text-xs text-gray-400 mt-1">Combos</div>
                 </div>
             </div>
             <div class="progress-bar">
@@ -436,12 +616,14 @@
                 Créer !
             </button>
 
-            <div class="grid grid-cols-4 gap-2">
-                <button id="resetBtn" class="mobile-btn">Effacer</button>
+            <div class="grid grid-cols-4 gap-2 mb-2">
                 <button id="hintBtn" class="mobile-btn mobile-btn-gold">💡</button>
                 <button id="autoBtn" class="mobile-btn" style="background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%); border: none;">⚡</button>
+                <button id="techTreeBtn" class="mobile-btn" style="background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); border: none;">🌳</button>
                 <button id="achievementsBtn" class="mobile-btn mobile-btn-green">🏆</button>
             </div>
+
+            <button id="resetBtn" class="mobile-btn w-full mb-2">Réinitialiser</button>
 
             <button id="debugEraBtn" class="mobile-btn mt-2 opacity-50" style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); border: none; font-size: 0.65rem;">
                 🚀 DEBUG
@@ -518,6 +700,8 @@
             combinationsCount: 0,
             history: [],
             achievements: [],
+            streak: 0,
+            maxStreak: 0,
             baseElements: [
                 { name: "Eau", icon: "💧" },
                 { name: "Pierre", icon: "🗿" },
@@ -679,6 +863,12 @@
                 const exists = gameState.elements.find(e => e.name === combination.result);
 
                 if (!exists) {
+                    // New discovery! INCREMENT STREAK
+                    gameState.streak++;
+                    if (gameState.streak > gameState.maxStreak) {
+                        gameState.maxStreak = gameState.streak;
+                    }
+
                     const newElement = {
                         name: combination.result,
                         icon: combination.icon,
@@ -688,17 +878,48 @@
                     gameState.elements.push(newElement);
                     gameState.combinationsCount++;
 
+                    // Spawn confetti on high streaks
+                    if (gameState.streak >= 5) {
+                        spawnConfetti(20);
+                    }
+
+                    // Show multiplier badge at milestones
+                    if (gameState.streak === 5) {
+                        showStreakMultiplier("x2 COMBO!");
+                    } else if (gameState.streak === 10) {
+                        showStreakMultiplier("x3 COMBO!");
+                    } else if (gameState.streak === 20) {
+                        showStreakMultiplier("x5 SUPER!");
+                    }
+
                     if (!skipModals) {
                         showDiscoveryModal(newElement, combination.narration);
                     }
+
+                    // Pulse stat counters
+                    pulseElement('#elementsCount');
+                    pulseElement('#combinationsCount');
+
                     checkAchievements();
                     checkEraProgression();
                 } else {
+                    // Already discovered - RESET STREAK
+                    if (gameState.streak > 0) {
+                        shakeElement('.combine-zone');
+                    }
+                    gameState.streak = 0;
+
                     if (!skipModals) {
                         showAlreadyDiscoveredModal(combination.result);
                     }
                 }
             } else {
+                // No result - RESET STREAK
+                if (gameState.streak > 0) {
+                    shakeElement('.combine-zone');
+                }
+                gameState.streak = 0;
+
                 if (!skipModals) {
                     showNoResultModal();
                 }
@@ -708,11 +929,112 @@
             updateCombineZone();
             renderElements();
             updateStats();
+            updateStreakDisplay();
 
             // Re-enable after a short delay
             setTimeout(() => {
                 updateCombineZone();
             }, 300);
+        }
+
+        // Update streak display with visual feedback
+        function updateStreakDisplay() {
+            const streakDisplay = document.getElementById('streakCount');
+            const streakNumber = document.getElementById('streakNumber');
+
+            streakNumber.textContent = gameState.streak;
+
+            // Remove all streak classes
+            streakDisplay.classList.remove('streak-low', 'streak-medium', 'streak-high', 'streak-ultra');
+
+            // Add appropriate class based on streak level
+            if (gameState.streak === 0) {
+                streakDisplay.classList.add('streak-low');
+            } else if (gameState.streak < 5) {
+                streakDisplay.classList.add('streak-low');
+            } else if (gameState.streak < 10) {
+                streakDisplay.classList.add('streak-medium');
+            } else if (gameState.streak < 20) {
+                streakDisplay.classList.add('streak-high');
+            } else {
+                streakDisplay.classList.add('streak-ultra');
+            }
+
+            // Pulse the streak display when it changes
+            if (gameState.streak > 0) {
+                pulseElement('#streakCount');
+            }
+        }
+
+        // Spawn confetti particles
+        function spawnConfetti(count) {
+            const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f7b731', '#5f27cd'];
+
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+
+                // Random position across screen width
+                confetti.style.left = Math.random() * 100 + 'vw';
+
+                // Random color
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+                // Random size
+                const size = Math.random() * 8 + 6;
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+
+                // Random animation delay
+                confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+
+                document.body.appendChild(confetti);
+
+                // Remove after animation completes
+                setTimeout(() => confetti.remove(), 2500);
+            }
+        }
+
+        // Show streak multiplier badge
+        function showStreakMultiplier(text) {
+            const badge = document.createElement('div');
+            badge.className = 'streak-multiplier';
+            badge.textContent = text;
+
+            document.body.appendChild(badge);
+
+            // Remove after animation completes
+            setTimeout(() => badge.remove(), 1500);
+        }
+
+        // Pulse an element
+        function pulseElement(selector) {
+            const element = document.querySelector(selector);
+            if (element) {
+                element.classList.remove('pulse');
+                // Force reflow to restart animation
+                void element.offsetWidth;
+                element.classList.add('pulse');
+
+                setTimeout(() => {
+                    element.classList.remove('pulse');
+                }, 400);
+            }
+        }
+
+        // Shake an element
+        function shakeElement(selector) {
+            const element = document.querySelector(selector);
+            if (element) {
+                element.classList.remove('shake');
+                // Force reflow to restart animation
+                void element.offsetWidth;
+                element.classList.add('shake');
+
+                setTimeout(() => {
+                    element.classList.remove('shake');
+                }, 500);
+            }
         }
 
         function checkAchievements() {
@@ -796,6 +1118,97 @@
                     <p class="text-base mb-4">${unlockedCount} / ${totalCount} débloqués</p>
                     <div class="max-h-96 overflow-y-auto">
                         ${achievementsList}
+                    </div>
+                    <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine mt-4">
+                        Fermer
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Show Tech Tree / Atlas
+        function showTechTree() {
+            // Build a map of all possible elements from COMBINATIONS
+            const allElements = new Map();
+
+            // Add starting elements
+            allElements.set('Humain', { icon: '👤', discovered: true, parents: [] });
+            allElements.set('Terre', { icon: '🏞️', discovered: true, parents: [] });
+
+            // Add base elements
+            gameState.baseElements.forEach(elem => {
+                if (!allElements.has(elem.name)) {
+                    const isDiscovered = gameState.elements.find(e => e.name === elem.name && e.discovered);
+                    allElements.set(elem.name, {
+                        icon: elem.icon,
+                        discovered: !!isDiscovered,
+                        parents: []
+                    });
+                }
+            });
+
+            // Process all combinations to build the tree
+            for (const key in COMBINATIONS) {
+                const [elem1, elem2] = key.split('+');
+                const combo = COMBINATIONS[key];
+
+                const isDiscovered = gameState.elements.find(e => e.name === combo.result && e.discovered);
+
+                if (!allElements.has(combo.result)) {
+                    allElements.set(combo.result, {
+                        icon: combo.icon,
+                        discovered: !!isDiscovered,
+                        parents: [[elem1, elem2]]
+                    });
+                } else {
+                    const element = allElements.get(combo.result);
+                    if (!element.parents.some(p => (p[0] === elem1 && p[1] === elem2) || (p[0] === elem2 && p[1] === elem1))) {
+                        element.parents.push([elem1, elem2]);
+                    }
+                    element.discovered = element.discovered || !!isDiscovered;
+                }
+            }
+
+            // Count discovered vs total
+            const discoveredCount = Array.from(allElements.values()).filter(e => e.discovered).length;
+            const totalCount = allElements.size;
+
+            // Sort: discovered first, then by name
+            const elementsArray = Array.from(allElements.entries()).map(([name, data]) => ({
+                name,
+                ...data
+            }));
+
+            elementsArray.sort((a, b) => {
+                if (a.discovered && !b.discovered) return -1;
+                if (!a.discovered && b.discovered) return 1;
+                return a.name.localeCompare(b.name);
+            });
+
+            const elementsList = elementsArray.map(elem => {
+                const parentsText = elem.parents.length > 0
+                    ? elem.parents.map(p => `${p[0]} + ${p[1]}`).slice(0, 1).join(' | ')
+                    : 'Base';
+
+                return `
+                    <div class="tech-tree-node ${elem.discovered ? 'discovered' : 'undiscovered'}">
+                        <div class="tech-tree-icon">${elem.discovered ? elem.icon : '❓'}</div>
+                        <div class="tech-tree-name ${elem.discovered ? 'text-white' : 'text-gray-600'}">${elem.discovered ? elem.name : '???'}</div>
+                        ${elem.discovered ? `<div class="text-xs text-gray-400 mt-1">${parentsText}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            const modal = document.createElement('div');
+            modal.className = 'discovery-modal';
+            modal.innerHTML = `
+                <div class="library-modal-content">
+                    <div class="text-5xl mb-4">🌳</div>
+                    <h2 class="text-2xl font-bold mb-4 text-cyan-400">Arbre Technologique</h2>
+                    <p class="text-base mb-4">${discoveredCount} / ${totalCount} éléments découverts</p>
+                    <div class="grid grid-cols-3 gap-2 max-h-[65vh] overflow-y-auto px-1">
+                        ${elementsList}
                     </div>
                     <button onclick="this.closest('.discovery-modal').remove()" class="btn-combine mt-4">
                         Fermer
@@ -1072,6 +1485,7 @@
 
             document.getElementById('currentEra').textContent = currentEraData.name;
             document.getElementById('elementsCount').textContent = discoveredCount;
+            document.getElementById('combinationsCount').textContent = gameState.combinationsCount;
             document.getElementById('progressBar').style.width = `${progress}%`;
             document.getElementById('achievementsCount').textContent = gameState.achievements.length;
         }
@@ -1085,6 +1499,7 @@
 
         document.getElementById('hintBtn').onclick = showHint;
         document.getElementById('autoBtn').onclick = autoCombine;
+        document.getElementById('techTreeBtn').onclick = showTechTree;
         document.getElementById('achievementsBtn').onclick = showAchievementsModal;
         document.getElementById('libraryBtn').onclick = showLibrary;
         document.getElementById('debugEraBtn').onclick = debugJumpToNextEra;
