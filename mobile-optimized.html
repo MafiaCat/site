@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>🏛️ Générateur de Civilisation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="combinations.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #d0d0d0;
+            touch-action: manipulation;
+            transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Thèmes par ère */
+        body.era-1 { background: linear-gradient(180deg, #1a1410 0%, #0f0a08 100%); }
+        body.era-2 { background: linear-gradient(180deg, #0f1a0f 0%, #08120a 100%); }
+        body.era-3 { background: linear-gradient(180deg, #1a1a1c 0%, #0f0f12 100%); }
+        body.era-4 { background: linear-gradient(180deg, #151515 0%, #0a0a0a 100%); }
+        body.era-5 { background: linear-gradient(180deg, #0a0a1a 0%, #05050f 100%); }
+
+        /* Cartes par ère */
+        body.era-1 .element-card { background: rgba(30, 20, 15, 0.6); border-color: rgba(139, 90, 60, 0.4); }
+        body.era-2 .element-card { background: rgba(20, 25, 20, 0.6); border-color: rgba(80, 120, 70, 0.4); }
+        body.era-3 .element-card { background: rgba(25, 25, 28, 0.6); border-color: rgba(150, 140, 130, 0.4); }
+        body.era-4 .element-card { background: rgba(20, 20, 20, 0.6); border-color: rgba(120, 120, 120, 0.4); }
+        body.era-5 .element-card { background: rgba(15, 15, 25, 0.6); border-color: rgba(80, 100, 140, 0.4); }
+
+        /* Couleurs titre par ère */
+        body.era-1 .era-title { color: #b8956a; }
+        body.era-2 .era-title { color: #7a9d6f; }
+        body.era-3 .era-title { color: #c4b5a0; }
+        body.era-4 .era-title { color: #a8a8a8; }
+        body.era-5 .era-title { color: #7a90b8; }
+
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Container principal */
+        .mobile-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+        }
+
+        /* Header très compact */
+        .mobile-header {
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 12px 6px 12px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        .era-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 4px;
+            transition: color 1.2s ease;
+        }
+
+        .progress-bar {
+            height: 3px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #ffd700 100%);
+            transition: width 0.5s ease;
+        }
+
+        /* Zone combinaison compacte */
+        .combine-section {
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 10px 12px;
+        }
+
+        .combine-zone {
+            background: rgba(255,215,0,0.05);
+            border: 2px dashed rgba(255,215,0,0.3);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .combine-zone.ready {
+            border-color: rgba(255,215,0,0.6);
+            background: rgba(255,215,0,0.12);
+            box-shadow: 0 0 20px rgba(255,215,0,0.2);
+        }
+
+        .slot {
+            width: 65px;
+            height: 65px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-combine {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            touch-action: manipulation;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .btn-combine:active {
+            transform: scale(0.95);
+        }
+
+        .btn-combine:disabled {
+            opacity: 0.5;
+        }
+
+        /* Section éléments avec scroll */
+        .elements-section {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px 12px 80px 12px;
+        }
+
+        .elements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .element-card {
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 14px;
+            padding: 10px 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+            position: relative;
+        }
+
+        .element-card:active {
+            transform: scale(0.93);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .element-card.selected {
+            border-color: rgba(255,215,0,0.8);
+            background: rgba(255,215,0,0.15);
+            box-shadow: 0 0 20px rgba(255,215,0,0.4);
+        }
+
+        .element-icon {
+            font-size: 2rem;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .element-name {
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.1;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Barre d'action fixe en bas */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 12px 8px;
+            border-radius: 14px;
+            font-size: 1.8rem;
+            touch-action: manipulation;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.9);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .action-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Modales */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
+            padding: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(22,33,62,0.98) 100%);
+            border: 2px solid rgba(255,215,0,0.5);
+            border-radius: 20px;
+            padding: 24px 20px;
+            max-width: 90vw;
+            max-height: 75vh;
+            overflow-y: auto;
+            text-align: center;
+            animation: scaleIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .narration-box {
+            background: rgba(0,0,0,0.5);
+            border-left: 3px solid #ffd700;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-style: italic;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(102,126,234,0.95) 0%, rgba(118,75,162,0.95) 100%);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.6);
+            animation: slideDown 0.5s ease-out, slideUp 0.3s ease-in 3s forwards;
+            z-index: 2000;
+            border: 2px solid rgba(255,215,0,0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 85%;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(0); opacity: 1; }
+            to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+        }
+
+        .notification .icon {
+            font-size: 2rem;
+        }
+
+        .notification .content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .notification .title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .notification .name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        /* Animations */
+        .pulse {
+            animation: pulse 0.4s ease-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: confettiFall 2s ease-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Streak display */
+        .streak-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        #streakIcon {
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .streak-low #streakIcon { font-size: 0.9em; filter: grayscale(50%); }
+        .streak-medium #streakIcon { font-size: 1.1em; animation: fireFlicker 0.5s ease-in-out infinite; }
+        .streak-high #streakIcon { font-size: 1.3em; animation: fireBurn 0.4s ease-in-out infinite; }
+        .streak-ultra #streakIcon { font-size: 1.5em; animation: fireExplode 0.3s ease-in-out infinite; }
+
+        @keyframes fireFlicker {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.1) translateY(-2px); }
+        }
+
+        @keyframes fireBurn {
+            0%, 100% { transform: scale(1) rotate(-3deg); }
+            50% { transform: scale(1.15) rotate(3deg); }
+        }
+
+        @keyframes fireExplode {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+        }
+
+        /* Multiplier badge */
+        .multiplier-badge {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            z-index: 9999;
+            pointer-events: none;
+            animation: multiplierPop 1.5s ease-out forwards;
+        }
+
+        @keyframes multiplierPop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            30% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+        }
+
+        /* Section title */
+        .section-title {
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body class="era-1">
+    <div class="mobile-layout">
+        <!-- Header compact -->
+        <div class="mobile-header">
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-value pulse-on-change" id="elementsCount">2</div>
+                    <div class="stat-label">Éléments</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value pulse-on-change" id="combinationsCount">0</div>
+                    <div class="stat-label">Combos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value streak-display streak-low" id="streakCount">
+                        <span id="streakIcon">🔥</span>
+                        <span id="streakNumber">0</span>
+                    </div>
+                    <div class="stat-label">Série</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="achievementsCount">0</div>
+                    <div class="stat-label">Succès</div>
+                </div>
+            </div>
+            <div class="era-title" id="eraTitle">TRIBALE - Le Monde</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Zone de combinaison -->
+        <div class="combine-section">
+            <div class="combine-zone" id="combineZone">
+                <div class="slot" id="slot1"></div>
+                <div style="font-size: 1.5rem; color: #ffd700; font-weight: bold;">+</div>
+                <div class="slot" id="slot2"></div>
+            </div>
+            <button id="combineBtn" class="btn-combine" disabled>Créer !</button>
+        </div>
+
+        <!-- Section éléments scrollable -->
+        <div class="elements-section">
+            <div class="section-title">✨ Éléments Actifs</div>
+            <div id="elementsGrid" class="elements-grid">
+                <!-- Elements dynamiques -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre d'action fixe en bas -->
+    <div class="action-bar">
+        <button id="hintBtn" class="action-btn">
+            <div>💡</div>
+            <div class="action-label">Indice</div>
+        </button>
+        <button id="autoBtn" class="action-btn">
+            <div>⚡</div>
+            <div class="action-label">Auto</div>
+        </button>
+        <button id="treeBtn" class="action-btn">
+            <div>🌳</div>
+            <div class="action-label">Arbre</div>
+        </button>
+        <button id="achievementsBtn" class="action-btn">
+            <div>🏆</div>
+            <div class="action-label">Succès</div>
+        </button>
+    </div>
+
+    <script>
+        // Game constants
+        const ERAS = {
+            1: { name: "TRIBALE", threshold: 50 },
+            2: { name: "AGRICOLE", threshold: 120 },
+            3: { name: "ANTIQUE", threshold: 250 },
+            4: { name: "INDUSTRIELLE", threshold: 400 },
+            5: { name: "SPATIALE", threshold: 999 }
+        };
+
+        const SECTIONS = {
+            "1.1": { era: 1, name: "Le Monde", requiredDiscoveries: 0 },
+            "1.2": { era: 1, name: "Le Foyer", requiredDiscoveries: 15 },
+            "1.3": { era: 1, name: "La Tribu", requiredDiscoveries: 30 },
+            "1.4": { era: 1, name: "La Survie", requiredDiscoveries: 45 },
+            "2.1": { era: 2, name: "Sédentarisation", requiredDiscoveries: 70 },
+            "2.2": { era: 2, name: "Élevage", requiredDiscoveries: 90 },
+            "2.3": { era: 2, name: "Société", requiredDiscoveries: 120 },
+            "2.4": { era: 2, name: "Conflits", requiredDiscoveries: 150 },
+            "3.1": { era: 3, name: "Âge du Métal", requiredDiscoveries: 180 },
+            "3.2": { era: 3, name: "La Cité", requiredDiscoveries: 210 },
+            "3.3": { era: 3, name: "Gouvernance", requiredDiscoveries: 240 },
+            "3.4": { era: 3, name: "Savoir", requiredDiscoveries: 270 },
+            "3.5": { era: 3, name: "Commerce", requiredDiscoveries: 300 },
+            "4.1": { era: 4, name: "Vapeur", requiredDiscoveries: 340 },
+            "4.2": { era: 4, name: "Idées", requiredDiscoveries: 370 },
+            "4.3": { era: 4, name: "Économie", requiredDiscoveries: 400 },
+            "4.4": { era: 4, name: "Technologies", requiredDiscoveries: 430 },
+            "5.1": { era: 5, name: "Information", requiredDiscoveries: 470 },
+            "5.2": { era: 5, name: "IA", requiredDiscoveries: 510 },
+            "5.3": { era: 5, name: "Espace", requiredDiscoveries: 550 },
+            "5.4": { era: 5, name: "Biotech", requiredDiscoveries: 580 },
+            "5.5": { era: 5, name: "Avenir", requiredDiscoveries: 610 }
+        };
+
+        const ACHIEVEMENTS = {
+            "first": { name: "✨ Premier Pas", desc: "1ère combinaison", check: (s) => s.combinationsCount >= 1, show: true },
+            "lab": { name: "🧪 Laborantin", desc: "10 combinaisons", check: (s) => s.combinationsCount >= 10, show: true },
+            "builder": { name: "🛠️ Bâtisseur", desc: "50 combinaisons", check: (s) => s.combinationsCount >= 50, show: true },
+            "thinker": { name: "🧠 Penseur", desc: "100 combinaisons", check: (s) => s.combinationsCount >= 100, show: true },
+            "streak2": { name: "🔥 x2", desc: "Série de 2", check: (s) => s.maxStreak >= 2, show: true },
+            "streak5": { name: "🔥🔥 x5", desc: "Série de 5", check: (s) => s.maxStreak >= 5, show: true },
+            "streak10": { name: "🔥🔥🔥 x10", desc: "Série de 10", check: (s) => s.maxStreak >= 10, show: true },
+            "fire": { name: "🔥 Maître du Feu", desc: "Découvrir le Feu", check: (s) => s.elements.find(e => e.name === "Feu" && e.discovered) },
+            "agri": { name: "🌾 Révolution", desc: "Découvrir l'Agriculture", check: (s) => s.elements.find(e => e.name === "Agriculture" && e.discovered) }
+        };
+
+        // Calculate total elements
+        let TOTAL_ELEMENTS = 0;
+        const allPossible = new Set(["Humain", "Terre"]);
+        for (const key in COMBINATIONS) {
+            allPossible.add(COMBINATIONS[key].result);
+        }
+        TOTAL_ELEMENTS = allPossible.size;
+
+        // Game state
+        let gameState = {
+            currentEra: 1,
+            currentSection: "1.1",
+            elements: [
+                { name: "Humain", icon: "👤", discovered: true, new: false },
+                { name: "Terre", icon: "🏞️", discovered: true, new: false }
+            ],
+            selectedElements: [],
+            combinationsCount: 0,
+            achievements: [],
+            streak: 0,
+            maxStreak: 0,
+            baseElements: [
+                { name: "Eau", icon: "💧" },
+                { name: "Pierre", icon: "🗿" },
+                { name: "Arbre", icon: "🌳" },
+                { name: "Son", icon: "🔊" },
+                { name: "Animal", icon: "🦌" },
+                { name: "Plante", icon: "🌱" },
+                { name: "Ciel", icon: "🌌" },
+                { name: "Feu", icon: "🔥" },
+                { name: "Vent", icon: "🌬️" },
+                { name: "Soleil", icon: "☀️" },
+                { name: "Graine", icon: "🌾" },
+                { name: "Laine", icon: "🧶" }
+            ]
+        };
+
+        // Utility functions
+        function ensureElement(name) {
+            if (!gameState.elements.find(e => e.name === name)) {
+                const base = gameState.baseElements.find(e => e.name === name);
+                if (base) {
+                    gameState.elements.push({ ...base, discovered: true, new: true });
+                }
+            }
+        }
+
+        function isElementUseful(name) {
+            for (const key in COMBINATIONS) {
+                const [e1, e2] = key.split('+');
+                if (e1 === name || e2 === name) {
+                    const combo = COMBINATIONS[key];
+                    const found = gameState.elements.find(e => e.name === combo.result && e.discovered);
+                    if (!found) return true;
+                }
+            }
+            return false;
+        }
+
+        function getCurrentSection() {
+            const count = gameState.elements.filter(e => e.discovered).length;
+            let section = "1.1";
+            for (const [id, data] of Object.entries(SECTIONS)) {
+                if (count >= data.requiredDiscoveries) section = id;
+            }
+            return section;
+        }
+
+        function isSectionAccessible(required) {
+            if (!required) return true;
+            const [ce, cs] = gameState.currentSection.split('.').map(Number);
+            const [re, rs] = required.split('.').map(Number);
+            if (ce > re) return true;
+            if (ce < re) return false;
+            return cs >= rs;
+        }
+
+        // Render functions
+        function renderElements() {
+            const grid = document.getElementById('elementsGrid');
+            grid.innerHTML = '';
+
+            gameState.elements
+                .filter(e => e.discovered && isElementUseful(e.name))
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .forEach(elem => {
+                    const card = document.createElement('div');
+                    card.className = `element-card ${gameState.selectedElements.includes(elem) ? 'selected' : ''}`;
+                    card.innerHTML = `
+                        <div class="element-icon">${elem.icon}</div>
+                        <div class="element-name">${elem.name}</div>
+                    `;
+                    card.onclick = () => selectElement(elem);
+                    grid.appendChild(card);
+                });
+        }
+
+        function selectElement(elem) {
+            const count = gameState.selectedElements.filter(e => e === elem).length;
+            if (count === 2) {
+                const idx = gameState.selectedElements.indexOf(elem);
+                gameState.selectedElements.splice(idx, 1);
+            } else if (gameState.selectedElements.length < 2) {
+                gameState.selectedElements.push(elem);
+            } else {
+                gameState.selectedElements = [elem];
+            }
+            updateCombineZone();
+            renderElements();
+        }
+
+        function updateCombineZone() {
+            document.getElementById('slot1').textContent = gameState.selectedElements[0]?.icon || '';
+            document.getElementById('slot2').textContent = gameState.selectedElements[1]?.icon || '';
+            const canCombine = gameState.selectedElements.length === 2;
+            document.getElementById('combineBtn').disabled = !canCombine;
+            document.getElementById('combineZone').classList.toggle('ready', canCombine);
+        }
+
+        function updateStats() {
+            const count = gameState.elements.filter(e => e.discovered).length;
+            const progress = Math.min(100, (count / TOTAL_ELEMENTS) * 100);
+            const section = SECTIONS[gameState.currentSection];
+            const era = ERAS[gameState.currentEra];
+
+            document.getElementById('elementsCount').textContent = count;
+            document.getElementById('combinationsCount').textContent = gameState.combinationsCount;
+            document.getElementById('streakNumber').textContent = gameState.streak;
+            document.getElementById('achievementsCount').textContent = gameState.achievements.length;
+            document.getElementById('eraTitle').textContent = `${era.name} - ${section.name}`;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            updateStreakDisplay();
+        }
+
+        function updateStreakDisplay() {
+            const display = document.getElementById('streakCount');
+            display.classList.remove('streak-low', 'streak-medium', 'streak-high', 'streak-ultra');
+            if (gameState.streak === 0) display.classList.add('streak-low');
+            else if (gameState.streak < 5) display.classList.add('streak-low');
+            else if (gameState.streak < 10) display.classList.add('streak-medium');
+            else if (gameState.streak < 20) display.classList.add('streak-high');
+            else display.classList.add('streak-ultra');
+        }
+
+        function updateEraTheme() {
+            document.body.classList.remove('era-1', 'era-2', 'era-3', 'era-4', 'era-5');
+            document.body.classList.add(`era-${gameState.currentEra}`);
+        }
+
+        // Combine logic
+        function combineElements() {
+            document.getElementById('combineBtn').disabled = true;
+
+            if (gameState.selectedElements.length !== 2) return;
+
+            const [e1, e2] = gameState.selectedElements;
+            const combo = COMBINATIONS[`${e1.name}+${e2.name}`] || COMBINATIONS[`${e2.name}+${e1.name}`];
+
+            if (!combo) {
+                if (gameState.streak > 0) shakeElement('.combine-zone');
+                gameState.streak = 0;
+                showModal('❌', 'Aucun résultat', 'Cette combinaison ne mène à rien...');
+                resetSelection();
+                return;
+            }
+
+            if (combo.section && !isSectionAccessible(combo.section)) {
+                const sec = SECTIONS[combo.section];
+                const remaining = sec.requiredDiscoveries - gameState.elements.filter(e => e.discovered).length;
+                showModal('🔒', 'Section verrouillée', `Encore ${remaining} découvertes pour débloquer <b>${combo.section}: ${sec.name}</b>`);
+                resetSelection();
+                return;
+            }
+
+            ensureElement(e1.name);
+            ensureElement(e2.name);
+
+            const exists = gameState.elements.find(e => e.name === combo.result);
+            if (exists) {
+                if (gameState.streak > 0) shakeElement('.combine-zone');
+                gameState.streak = 0;
+                showModal('🔄', 'Déjà découvert', `Tu as déjà <b style="color: #ffd700;">${combo.result}</b>`);
+                resetSelection();
+                return;
+            }
+
+            // New discovery!
+            gameState.streak++;
+            if (gameState.streak > gameState.maxStreak) gameState.maxStreak = gameState.streak;
+
+            const newElem = { name: combo.result, icon: combo.icon, discovered: true, new: true };
+            gameState.elements.push(newElem);
+            gameState.combinationsCount++;
+
+            if (gameState.streak >= 2) spawnConfetti(Math.min(30, gameState.streak * 3));
+            if (gameState.streak === 2) showMultiplier("x2 COMBO!");
+            else if (gameState.streak === 5) showMultiplier("x5 SUPER!");
+            else if (gameState.streak === 10) showMultiplier("x10 FANTASTIC!");
+
+            showNotification(newElem);
+            showDiscoveryModal(newElem, combo.narration);
+
+            pulseElement('#elementsCount');
+            pulseElement('#combinationsCount');
+
+            checkAchievements();
+            checkSectionProgression();
+            checkEraProgression();
+
+            resetSelection();
+        }
+
+        function resetSelection() {
+            gameState.selectedElements = [];
+            updateCombineZone();
+            renderElements();
+            updateStats();
+            setTimeout(() => {
+                document.getElementById('combineBtn').disabled = false;
+            }, 300);
+        }
+
+        function checkAchievements() {
+            for (const [key, ach] of Object.entries(ACHIEVEMENTS)) {
+                if (!gameState.achievements.includes(key) && ach.check(gameState)) {
+                    gameState.achievements.push(key);
+                }
+            }
+        }
+
+        function checkSectionProgression() {
+            const newSection = getCurrentSection();
+            if (newSection !== gameState.currentSection) {
+                gameState.currentSection = newSection;
+                const sec = SECTIONS[newSection];
+                if (sec.era !== gameState.currentEra) {
+                    gameState.currentEra = sec.era;
+                    updateEraTheme();
+                }
+            }
+        }
+
+        function checkEraProgression() {
+            const count = gameState.elements.filter(e => e.discovered).length;
+            const era = ERAS[gameState.currentEra];
+            if (count >= era.threshold && gameState.currentEra < 5) {
+                gameState.currentEra++;
+                updateEraTheme();
+            }
+        }
+
+        // UI Effects
+        function pulseElement(selector) {
+            const elem = document.querySelector(selector);
+            if (elem) {
+                elem.classList.remove('pulse');
+                void elem.offsetWidth;
+                elem.classList.add('pulse');
+                setTimeout(() => elem.classList.remove('pulse'), 400);
+            }
+        }
+
+        function shakeElement(selector) {
+            const elem = document.querySelector(selector);
+            if (elem) {
+                elem.classList.remove('shake');
+                void elem.offsetWidth;
+                elem.classList.add('shake');
+                setTimeout(() => elem.classList.remove('shake'), 500);
+            }
+        }
+
+        function spawnConfetti(count) {
+            const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#f7b731', '#5f27cd'];
+            for (let i = 0; i < count; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                c.style.animationDelay = (Math.random() * 0.5) + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 2500);
+            }
+        }
+
+        function showMultiplier(text) {
+            const badge = document.createElement('div');
+            badge.className = 'multiplier-badge';
+            badge.textContent = text;
+            document.body.appendChild(badge);
+            setTimeout(() => badge.remove(), 1500);
+        }
+
+        function showNotification(elem) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.innerHTML = `
+                <div class="icon">${elem.icon}</div>
+                <div class="content">
+                    <div class="title">✨ Nouvelle découverte</div>
+                    <div class="name">${elem.name}</div>
+                </div>
+            `;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 3500);
+        }
+
+        function showModal(icon, title, message, narration = null) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div style="font-size: 3.5rem; margin-bottom: 16px;">${icon}</div>
+                    <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: #ffd700;">${title}</h2>
+                    <p style="font-size: 0.95rem; margin-bottom: ${narration ? '8px' : '20px'}; color: #ddd;">${message}</p>
+                    ${narration ? `<div class="narration-box">${narration}</div>` : ''}
+                    <button onclick="this.closest('.modal').remove()" class="btn-combine" style="margin-top: 16px;">Continuer</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showDiscoveryModal(elem, narration) {
+            showModal(elem.icon, '✨ Nouvelle découverte !', `<b style="font-size: 1.1rem;">${elem.name}</b>`, narration);
+        }
+
+        function showHint() {
+            const discovered = gameState.elements.filter(e => e.discovered).map(e => e.name);
+            const hints = [];
+            for (const key in COMBINATIONS) {
+                const [e1, e2] = key.split('+');
+                const combo = COMBINATIONS[key];
+                if (discovered.includes(e1) && discovered.includes(e2)) {
+                    const found = gameState.elements.find(e => e.name === combo.result);
+                    if (!found) hints.push({ e1, e2 });
+                }
+            }
+
+            if (hints.length === 0) {
+                showModal('🤔', 'Aucun indice', 'Tu as tout découvert avec tes éléments actuels !');
+                return;
+            }
+
+            const hint = hints[Math.floor(Math.random() * hints.length)];
+            const i1 = gameState.elements.find(e => e.name === hint.e1)?.icon || "❓";
+            const i2 = gameState.elements.find(e => e.name === hint.e2)?.icon || "❓";
+
+            showModal('💡', 'Indice', `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 3.5rem; margin: 20px 0;">
+                    <span>${i1}</span>
+                    <span style="font-size: 2rem; color: #ffd700;">+</span>
+                    <span>${i2}</span>
+                </div>
+                <p style="font-size: 0.9rem; color: #aaa; margin-top: 12px;">${hint.e1} + ${hint.e2}</p>
+            `);
+        }
+
+        function autoCombine() {
+            const discovered = gameState.elements.filter(e => e.discovered).map(e => e.name);
+            const possible = [];
+            for (const key in COMBINATIONS) {
+                const [e1, e2] = key.split('+');
+                if (discovered.includes(e1) && discovered.includes(e2)) {
+                    const found = gameState.elements.find(e => e.name === COMBINATIONS[key].result);
+                    if (!found) possible.push({ e1, e2 });
+                }
+            }
+
+            if (possible.length === 0) {
+                showModal('✨', 'Auto', 'Aucune combinaison disponible !');
+                return;
+            }
+
+            const combo = possible[Math.floor(Math.random() * possible.length)];
+            gameState.selectedElements = [
+                gameState.elements.find(e => e.name === combo.e1),
+                gameState.elements.find(e => e.name === combo.e2)
+            ];
+            updateCombineZone();
+            renderElements();
+            setTimeout(() => combineElements(), 500);
+        }
+
+        function showAchievements() {
+            const list = Object.entries(ACHIEVEMENTS).map(([key, ach]) => {
+                const unlocked = gameState.achievements.includes(key);
+                const showDetails = unlocked || ach.show;
+                return `
+                    <div style="background: rgba(255,255,255,${unlocked ? '0.1' : '0.03'}); padding: 12px; border-radius: 12px; margin-bottom: 10px; text-align: left; border: 1px solid rgba(255,255,255,${unlocked ? '0.2' : '0.05'}); ${unlocked ? '' : 'opacity: 0.5;'}">
+                        <div style="font-weight: 700; font-size: 1rem; color: ${unlocked ? '#ffd700' : '#666'}; margin-bottom: 4px;">${showDetails ? ach.name : '🔒 ???'}</div>
+                        <div style="font-size: 0.8rem; color: ${unlocked ? '#bbb' : '#555'};">${showDetails ? ach.desc : 'Succès verrouillé'}</div>
+                    </div>
+                `;
+            }).join('');
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-height: 80vh;">
+                    <div style="font-size: 3.5rem; margin-bottom: 12px;">🏆</div>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: #ffd700;">Succès</h2>
+                    <p style="margin-bottom: 20px; color: #aaa; font-size: 0.95rem;">${gameState.achievements.length} / ${Object.keys(ACHIEVEMENTS).length} débloqués</p>
+                    <div style="max-height: 50vh; overflow-y: auto; padding-right: 4px;">${list}</div>
+                    <button onclick="this.closest('.modal').remove()" class="btn-combine" style="margin-top: 20px;">Fermer</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function showTree() {
+            const all = new Map();
+            all.set('Humain', { icon: '👤', discovered: true });
+            all.set('Terre', { icon: '🏞️', discovered: true });
+
+            for (const key in COMBINATIONS) {
+                const combo = COMBINATIONS[key];
+                const found = gameState.elements.find(e => e.name === combo.result && e.discovered);
+                all.set(combo.result, { icon: combo.icon, discovered: !!found });
+            }
+
+            const discovered = Array.from(all.values()).filter(e => e.discovered).length;
+            const total = all.size;
+
+            const list = Array.from(all.entries())
+                .sort((a, b) => {
+                    if (a[1].discovered && !b[1].discovered) return -1;
+                    if (!a[1].discovered && b[1].discovered) return 1;
+                    return a[0].localeCompare(b[0]);
+                })
+                .map(([name, data]) => `
+                    <div style="background: rgba(255,255,255,${data.discovered ? '0.08' : '0.02'}); border: 1px solid rgba(255,255,255,${data.discovered ? '0.2' : '0.05'}); border-radius: 12px; padding: 10px; text-align: center; ${data.discovered ? '' : 'opacity: 0.3;'}">
+                        <div style="font-size: 2.2rem; margin-bottom: 6px;">${data.discovered ? data.icon : '❓'}</div>
+                        <div style="font-size: 0.7rem; font-weight: 600; color: ${data.discovered ? '#fff' : '#555'}; line-height: 1.2;">${data.discovered ? name : '???'}</div>
+                    </div>
+                `).join('');
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 95vw; max-height: 85vh;">
+                    <div style="font-size: 3.5rem; margin-bottom: 12px;">🌳</div>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; color: #4ecdc4;">Arbre Technologique</h2>
+                    <p style="margin-bottom: 16px; color: #aaa; font-size: 0.9rem;">${discovered} / ${total} éléments découverts</p>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 55vh; overflow-y: auto; padding-right: 4px;">${list}</div>
+                    <button onclick="this.closest('.modal').remove()" class="btn-combine" style="margin-top: 20px;">Fermer</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Event listeners
+        document.getElementById('combineBtn').onclick = combineElements;
+        document.getElementById('hintBtn').onclick = showHint;
+        document.getElementById('autoBtn').onclick = autoCombine;
+        document.getElementById('treeBtn').onclick = showTree;
+        document.getElementById('achievementsBtn').onclick = showAchievements;
+
+        // Prevent double-tap zoom
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) e.preventDefault();
+            lastTouchEnd = now;
+        }, false);
+
+        // Init
+        renderElements();
+        updateStats();
+        updateEraTheme();
+    </script>
+</body>
+</html>
